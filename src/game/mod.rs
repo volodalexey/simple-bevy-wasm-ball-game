@@ -3,6 +3,7 @@ mod player;
 mod score;
 mod star;
 mod systems;
+mod ui;
 
 use bevy::prelude::{
     in_state, App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, Plugin, States,
@@ -11,6 +12,7 @@ use enemy::EnemyPlugin;
 use player::PlayerPlugin;
 use score::ScorePlugin;
 use star::StarPlugin;
+use ui::GameUIPlugin;
 
 use crate::{events::GameOver, AppState};
 
@@ -32,6 +34,7 @@ impl Plugin for GamePlugin {
             .add_plugin(PlayerPlugin)
             .add_plugin(ScorePlugin)
             .add_plugin(StarPlugin)
+            .add_plugin(GameUIPlugin)
             // Systems
             .add_system(toggle_simulation.run_if(in_state(AppState::Game)))
             // Exit State Systems
