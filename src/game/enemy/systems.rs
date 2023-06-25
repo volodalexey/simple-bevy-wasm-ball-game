@@ -1,6 +1,7 @@
 use bevy::{
     prelude::{
-        default, AssetServer, Audio, Commands, Query, Res, ResMut, Transform, Vec2, Vec3, With,
+        default, AssetServer, Audio, Commands, Entity, Query, Res, ResMut, Transform, Vec2, Vec3,
+        With,
     },
     sprite::SpriteBundle,
     time::Time,
@@ -33,6 +34,12 @@ pub fn spawn_enemies(
                 direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
             },
         ));
+    }
+}
+
+pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<Enemy>>) {
+    for enemy_entity in enemy_query.iter() {
+        commands.entity(enemy_entity).despawn();
     }
 }
 

@@ -1,4 +1,4 @@
-use bevy::prelude::{default, AssetServer, Commands, Query, Res, ResMut, Transform, With};
+use bevy::prelude::{default, AssetServer, Commands, Entity, Query, Res, ResMut, Transform, With};
 use bevy::sprite::SpriteBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
@@ -27,6 +27,12 @@ pub fn spawn_stars(
             },
             Star {},
         ));
+    }
+}
+
+pub fn despawn_stars(mut commands: Commands, star_query: Query<Entity, With<Star>>) {
+    for star_entity in star_query.iter() {
+        commands.entity(star_entity).despawn();
     }
 }
 
