@@ -1,5 +1,5 @@
 [package]
-name = "follow-bevy-ball-game"
+name = "simple-bevy-wasm-ball-game"
 version = "0.1.0"
 edition = "2021"
 

@@ -1,4 +1,4 @@
-import init from './follow-bevy-ball-game.js'
+import init from './simple-bevy-wasm-ball-game.js'
 
 async function run() {
     const loader = document.querySelector('.loader')
