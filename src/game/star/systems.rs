@@ -4,6 +4,7 @@ use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 use rand::random;
 
+use crate::game::audio::AudioClipAssets;
 use crate::game::player::PLAYER_SIZE;
 
 use super::components::Star;
@@ -14,6 +15,7 @@ pub fn spawn_stars(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
+    audio_clips: Res<AudioClipAssets>,
 ) {
     let window = window_query.get_single().unwrap();
 
@@ -41,7 +43,9 @@ pub fn spawn_stars(
                 texture: asset_server.load("sprites/star.png"),
                 ..default()
             },
-            Star {},
+            Star {
+                collect_audio_clip: audio_clips.star_collect.clone(),
+            },
         ));
     }
 }
@@ -61,6 +65,7 @@ pub fn spawn_stars_over_time(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     star_spawn_timer: Res<StarSpawnTimer>,
+    audio_clips: Res<AudioClipAssets>,
 ) {
     if star_spawn_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
@@ -73,7 +78,9 @@ pub fn spawn_stars_over_time(
                 texture: asset_server.load("sprites/star.png"),
                 ..default()
             },
-            Star {},
+            Star {
+                collect_audio_clip: audio_clips.star_collect.clone(),
+            },
         ));
     }
 }

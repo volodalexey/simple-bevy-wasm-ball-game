@@ -1,7 +1,7 @@
 use bevy::{
     prelude::{
-        default, AssetServer, Audio, Commands, Entity, Query, Res, ResMut, Transform, Vec2, Vec3,
-        With,
+        default, AssetServer, Commands, Entity, EventWriter, Query, Res, ResMut, Transform, Vec2,
+        Vec3, With,
     },
     sprite::SpriteBundle,
     time::Time,
@@ -9,7 +9,10 @@ use bevy::{
 };
 use rand::random;
 
-use crate::game::player::PLAYER_SIZE;
+use crate::{
+    events::AudioEvent,
+    game::{audio::AudioClipAssets, player::PLAYER_SIZE},
+};
 
 use super::{
     components::Enemy, resources::EnemySpawnTimer, ENEMY_SIZE, ENEMY_SPEED, NUMBER_OF_ENEMIES,
@@ -19,6 +22,7 @@ pub fn spawn_enemies(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
+    audio_clips: Res<AudioClipAssets>,
 ) {
     let window = window_query.get_single().unwrap();
 
@@ -48,6 +52,8 @@ pub fn spawn_enemies(
             },
             Enemy {
                 direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
+                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
             },
         ));
     }
@@ -69,8 +75,7 @@ pub fn enemy_movement(mut enemy_query: Query<(&mut Transform, &Enemy)>, time: Re
 pub fn update_enemy_direction(
     mut enemy_query: Query<(&Transform, &mut Enemy)>,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    audio: Res<Audio>,
-    asset_server: Res<AssetServer>,
+    mut audio_event: EventWriter<AudioEvent>,
 ) {
     let window = window_query.get_single().unwrap();
 
@@ -95,16 +100,13 @@ pub fn update_enemy_direction(
 
         // Play SFX
         if direction_changed {
-            // Play Sound Effect
-            let sound_effect_1 = asset_server.load("audio/pluck_001.ogg");
-            let sound_effect_2 = asset_server.load("audio/pluck_002.ogg");
             // Randomly play one of the two sound effects.
-            let sound_effect = if random::<f32>() > 0.5 {
-                sound_effect_1
+            let clip = if random::<f32>() > 0.5 {
+                enemy.bounce_audio_clip_1.clone()
             } else {
-                sound_effect_2
+                enemy.bounce_audio_clip_2.clone()
             };
-            audio.play(sound_effect);
+            audio_event.send(AudioEvent { clip })
         }
     }
 }
@@ -150,6 +152,7 @@ pub fn spawn_enemies_over_time(
     window_query: Query<&Window, With<PrimaryWindow>>,
     asset_server: Res<AssetServer>,
     enemy_spawn_timer: Res<EnemySpawnTimer>,
+    audio_clips: Res<AudioClipAssets>,
 ) {
     if enemy_spawn_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
@@ -165,6 +168,8 @@ pub fn spawn_enemies_over_time(
             },
             Enemy {
                 direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
+                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
             },
         ));
     }

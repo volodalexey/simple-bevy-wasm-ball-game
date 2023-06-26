@@ -1,3 +1,4 @@
+mod audio;
 mod enemy;
 mod player;
 mod score;
@@ -16,7 +17,10 @@ use ui::GameUIPlugin;
 
 use crate::{events::GameOverEvent, AppState};
 
-use self::systems::{pause_simulation, resume_simulation, toggle_simulation};
+use self::{
+    audio::GameAudioPlugin,
+    systems::{pause_simulation, resume_simulation, toggle_simulation},
+};
 
 pub struct GamePlugin;
 
@@ -30,6 +34,7 @@ impl Plugin for GamePlugin {
             // OnEnter Systems
             .add_system(pause_simulation.in_schedule(OnEnter(AppState::Game)))
             // My Plugins
+            .add_plugin(GameAudioPlugin)
             .add_plugin(EnemyPlugin)
             .add_plugin(PlayerPlugin)
             .add_plugin(ScorePlugin)

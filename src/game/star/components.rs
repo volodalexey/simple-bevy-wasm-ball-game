@@ -1,4 +1,6 @@
-use bevy::prelude::Component;
+use bevy::prelude::{AudioSource, Component, Handle};
 
 #[derive(Component)]
-pub struct Star {}
+pub struct Star {
+    pub collect_audio_clip: Handle<AudioSource>,
+}
