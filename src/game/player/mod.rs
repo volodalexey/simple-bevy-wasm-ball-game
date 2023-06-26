@@ -21,6 +21,8 @@ pub struct MovementSystemSet;
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub struct ConfinementSystemSet;
 
+pub const PLAYER_SIZE: f32 = 64.0; // This is the player sprite size.
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {

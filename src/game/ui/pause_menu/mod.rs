@@ -6,7 +6,7 @@ use bevy::prelude::{
     App, IntoSystemAppConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate, Plugin,
 };
 
-use crate::game::SimulationState;
+use crate::{game::SimulationState, AppState};
 
 use self::systems::{
     interactions::{
@@ -21,7 +21,7 @@ impl Plugin for PauseMenuPlugin {
     fn build(&self, app: &mut App) {
         app
             // OnEnter Systems
-            .add_system(spawn_pause_menu.in_schedule(OnEnter(SimulationState::Paused)))
+            .add_system(spawn_pause_menu.in_schedule(OnEnter(AppState::Game)))
             // Systems
             .add_systems(
                 (

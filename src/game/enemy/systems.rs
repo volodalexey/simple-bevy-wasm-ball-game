@@ -9,6 +9,8 @@ use bevy::{
 };
 use rand::random;
 
+use crate::game::player::PLAYER_SIZE;
+
 use super::{
     components::Enemy, resources::EnemySpawnTimer, ENEMY_SIZE, ENEMY_SPEED, NUMBER_OF_ENEMIES,
 };
@@ -21,8 +23,22 @@ pub fn spawn_enemies(
     let window = window_query.get_single().unwrap();
 
     for _ in 0..NUMBER_OF_ENEMIES {
-        let random_x = random::<f32>() * window.width();
-        let random_y = random::<f32>() * window.height();
+        let available_width = window.width() - PLAYER_SIZE;
+        let available_height = window.height() - PLAYER_SIZE;
+        let random_x_full = random::<f32>() * available_width;
+        let random_y_full = random::<f32>() * available_height;
+
+        let random_x = if random_x_full > available_width / 2.0 {
+            random_x_full + PLAYER_SIZE
+        } else {
+            random_x_full
+        };
+
+        let random_y = if random_y_full > available_height / 2.0 {
+            random_y_full + PLAYER_SIZE
+        } else {
+            random_y_full
+        };
 
         commands.spawn((
             SpriteBundle {
