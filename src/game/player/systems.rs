@@ -7,7 +7,7 @@ use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 
 use super::components::Player;
-use crate::events::GameOver;
+use crate::events::GameOverEvent;
 use crate::game::enemy::components::Enemy;
 use crate::game::enemy::ENEMY_SIZE;
 use crate::game::score::resources::Score;
@@ -132,12 +132,11 @@ pub fn confine_player_movement(
 
 pub fn enemy_hit_player(
     mut commands: Commands,
-    mut game_over_event_writer: EventWriter<GameOver>,
+    mut game_over_event_writer: EventWriter<GameOverEvent>,
     mut player_query: Query<(Entity, &Transform), With<Player>>,
     enemy_query: Query<&Transform, With<Enemy>>,
     asset_server: Res<AssetServer>,
     audio: Res<Audio>,
-    score: Res<Score>,
 ) {
     if let Ok((player_entity, player_transform)) = player_query.get_single_mut() {
         for enemy_transform in enemy_query.iter() {
@@ -151,7 +150,7 @@ pub fn enemy_hit_player(
                 let sound_effect = asset_server.load("audio/explosionCrunch_000.ogg");
                 audio.play(sound_effect);
                 commands.entity(player_entity).despawn();
-                game_over_event_writer.send(GameOver { score: score.value });
+                game_over_event_writer.send(GameOverEvent {});
             }
         }
     }

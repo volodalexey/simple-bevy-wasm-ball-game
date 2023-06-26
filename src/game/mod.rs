@@ -14,7 +14,7 @@ use score::ScorePlugin;
 use star::StarPlugin;
 use ui::GameUIPlugin;
 
-use crate::{events::GameOver, AppState};
+use crate::{events::GameOverEvent, AppState};
 
 use self::systems::{pause_simulation, resume_simulation, toggle_simulation};
 
@@ -24,7 +24,7 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app
             // Events
-            .add_event::<GameOver>()
+            .add_event::<GameOverEvent>()
             // States
             .add_state::<SimulationState>()
             // OnEnter Systems

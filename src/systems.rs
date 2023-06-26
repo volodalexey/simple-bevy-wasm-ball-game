@@ -5,7 +5,7 @@ use bevy::prelude::{
 };
 use bevy::window::{PrimaryWindow, Window};
 
-use crate::events::GameOver;
+use crate::events::GameOverEvent;
 use crate::AppState;
 
 pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
@@ -44,11 +44,10 @@ pub fn transition_to_main_menu_state(
 }
 
 pub fn handle_game_over(
-    mut game_over_event_reader: EventReader<GameOver>,
+    mut game_over_event_reader: EventReader<GameOverEvent>,
     mut app_state_next_state: ResMut<NextState<AppState>>,
 ) {
-    for event in game_over_event_reader.iter() {
-        println!("Your final score is: {}", event.score.to_string());
+    for _event in game_over_event_reader.iter() {
         app_state_next_state.set(AppState::GameOver);
         println!("Entered AppState::GameOver");
     }
