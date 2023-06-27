@@ -2,7 +2,7 @@ use bevy::prelude::{default, AssetServer, Commands, Entity, Query, Res, ResMut, 
 use bevy::sprite::SpriteBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
-use rand::random;
+use fastrand;
 
 use crate::game::audio::AudioClipAssets;
 use crate::game::player::PLAYER_SIZE;
@@ -22,8 +22,8 @@ pub fn spawn_stars(
     for _ in 0..NUMBER_OF_STARS {
         let available_width = window.width() - PLAYER_SIZE;
         let available_height = window.height() - PLAYER_SIZE;
-        let random_x_full = random::<f32>() * available_width;
-        let random_y_full = random::<f32>() * available_height;
+        let random_x_full = fastrand::f32() * available_width;
+        let random_y_full = fastrand::f32() * available_height;
 
         let random_x = if random_x_full > available_width / 2.0 {
             random_x_full + PLAYER_SIZE
@@ -69,8 +69,8 @@ pub fn spawn_stars_over_time(
 ) {
     if star_spawn_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
-        let random_x = random::<f32>() * window.width();
-        let random_y = random::<f32>() * window.height();
+        let random_x = fastrand::f32() * window.width();
+        let random_y = fastrand::f32() * window.height();
 
         commands.spawn((
             SpriteBundle {

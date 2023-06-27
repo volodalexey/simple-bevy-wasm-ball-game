@@ -7,7 +7,6 @@ use bevy::{
     time::Time,
     window::{PrimaryWindow, Window},
 };
-use rand::random;
 
 use crate::{
     events::AudioEvent,
@@ -29,8 +28,8 @@ pub fn spawn_enemies(
     for _ in 0..NUMBER_OF_ENEMIES {
         let available_width = window.width() - PLAYER_SIZE;
         let available_height = window.height() - PLAYER_SIZE;
-        let random_x_full = random::<f32>() * available_width;
-        let random_y_full = random::<f32>() * available_height;
+        let random_x_full = fastrand::f32() * available_width;
+        let random_y_full = fastrand::f32() * available_height;
 
         let random_x = if random_x_full > available_width / 2.0 {
             random_x_full + PLAYER_SIZE
@@ -51,7 +50,7 @@ pub fn spawn_enemies(
                 ..default()
             },
             Enemy {
-                direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+                direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
                 bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
                 bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
             },
@@ -101,7 +100,7 @@ pub fn update_enemy_direction(
         // Play SFX
         if direction_changed {
             // Randomly play one of the two sound effects.
-            let clip = if random::<f32>() > 0.5 {
+            let clip = if fastrand::f32() > 0.5 {
                 enemy.bounce_audio_clip_1.clone()
             } else {
                 enemy.bounce_audio_clip_2.clone()
@@ -157,8 +156,8 @@ pub fn spawn_enemies_over_time(
     if enemy_spawn_timer.timer.finished() {
         let window = window_query.get_single().unwrap();
 
-        let random_x = random::<f32>() * window.width();
-        let random_y = random::<f32>() * window.height();
+        let random_x = fastrand::f32() * window.width();
+        let random_y = fastrand::f32() * window.height();
 
         commands.spawn((
             SpriteBundle {
@@ -167,7 +166,7 @@ pub fn spawn_enemies_over_time(
                 ..default()
             },
             Enemy {
-                direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
+                direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
                 bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
                 bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
             },
