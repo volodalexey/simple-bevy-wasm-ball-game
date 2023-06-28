@@ -41,8 +41,8 @@ fn extract_models(
             gltf: gltf_scene_handle.gltf.clone(),
         });
         commands.insert_resource(ModelAssets {
-            player: gltf_scene.named_scenes["SceneIcoBall"].clone(),
-            enemy: gltf_scene.named_scenes["SceneIcoBall"].clone(),
+            player: gltf_scene.named_scenes["ScenePlayerBall"].clone(),
+            enemy: gltf_scene.named_scenes["SceneEnemyBall"].clone(),
             star: gltf_scene.named_scenes["SceneStar"].clone(),
         });
     }
