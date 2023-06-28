@@ -1,8 +1,8 @@
 use bevy::prelude::{
-    default, AssetServer, Commands, Entity, EventWriter, Input, KeyCode, Query, Res, ResMut,
-    ScanCode, Transform, Vec3, With,
+    default, Commands, DespawnRecursiveExt, Entity, EventWriter, Input, KeyCode, Query, Res,
+    ResMut, ScanCode, Transform, Vec3, With,
 };
-use bevy::sprite::SpriteBundle;
+use bevy::scene::SceneBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 
@@ -11,6 +11,7 @@ use crate::events::{AudioEvent, GameOverEvent};
 use crate::game::audio::AudioClipAssets;
 use crate::game::enemy::components::Enemy;
 use crate::game::enemy::ENEMY_SIZE;
+use crate::game::models::ModelAssets;
 use crate::game::score::resources::Score;
 use crate::game::star::components::Star;
 use crate::game::star::STAR_SIZE;
@@ -31,15 +32,15 @@ pub enum EScanCode {
 pub fn spawn_player(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    asset_server: Res<AssetServer>,
+    model_assets: Res<ModelAssets>,
     audio_clips: Res<AudioClipAssets>,
 ) {
     let window = window_query.get_single().unwrap();
 
     commands.spawn((
-        SpriteBundle {
+        SceneBundle {
+            scene: model_assets.player.clone(),
             transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
-            texture: asset_server.load("sprites/ball_blue_large.png"),
             ..default()
         },
         Player {
@@ -50,7 +51,7 @@ pub fn spawn_player(
 
 pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {
     if let Ok(player_entity) = player_query.get_single() {
-        commands.entity(player_entity).despawn();
+        commands.entity(player_entity).despawn_recursive();
     }
 }
 
@@ -152,7 +153,7 @@ pub fn enemy_hit_player(
                 audio_event.send(AudioEvent {
                     clip: player.explosion_audio_clip.clone(),
                 });
-                commands.entity(player_entity).despawn();
+                commands.entity(player_entity).despawn_recursive();
                 game_over_event_writer.send(GameOverEvent {});
             }
         }
@@ -173,12 +174,11 @@ pub fn player_hit_star(
                 .distance(star_transform.translation);
 
             if distance < PLAYER_SIZE / 2.0 + STAR_SIZE / 2.0 {
-                println!("Player hit star!");
                 score.value += 1;
                 audio_event.send(AudioEvent {
                     clip: star.collect_audio_clip.clone(),
                 });
-                commands.entity(star_entity).despawn();
+                commands.entity(star_entity).despawn_recursive();
             }
         }
     }

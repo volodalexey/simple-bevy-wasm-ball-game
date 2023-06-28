@@ -17,7 +17,6 @@ use crate::game::ui::pause_menu::{
 };
 
 pub fn spawn_pause_menu(mut commands: Commands, asset_server: Res<AssetServer>) {
-    println!("Spawning Pause Menu");
     build_pause_menu(&mut commands, &asset_server);
 }
 
@@ -110,6 +109,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                             });
                         });
                     // Quit Button
+                    // #[cfg(not(target_arch = "wasm32"))]
                     parent
                         .spawn((
                             ButtonBundle {

@@ -10,7 +10,7 @@ use bevy::{
 use game::GamePlugin;
 use main_menu::MainMenuPlugin;
 use systems::{
-    exit_game, handle_game_over, spawn_camera, transition_to_game_state,
+    exit_game, handle_game_over, spawn_camera, spawn_lights, transition_to_game_state,
     transition_to_main_menu_state,
 };
 
@@ -24,6 +24,7 @@ fn main() {
         .add_plugin(GamePlugin)
         // Startup Systems
         .add_startup_system(spawn_camera)
+        .add_startup_system(spawn_lights)
         // Systems
         .add_system(transition_to_game_state)
         .add_system(transition_to_main_menu_state)

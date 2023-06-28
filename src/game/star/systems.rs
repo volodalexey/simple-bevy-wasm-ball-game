@@ -1,10 +1,13 @@
-use bevy::prelude::{default, AssetServer, Commands, Entity, Query, Res, ResMut, Transform, With};
-use bevy::sprite::SpriteBundle;
+use bevy::prelude::{
+    default, Commands, DespawnRecursiveExt, Entity, Query, Res, ResMut, Transform, With,
+};
+use bevy::scene::SceneBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 use fastrand;
 
 use crate::game::audio::AudioClipAssets;
+use crate::game::models::ModelAssets;
 use crate::game::player::PLAYER_SIZE;
 
 use super::components::Star;
@@ -14,7 +17,7 @@ use super::NUMBER_OF_STARS;
 pub fn spawn_stars(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    asset_server: Res<AssetServer>,
+    model_assets: Res<ModelAssets>,
     audio_clips: Res<AudioClipAssets>,
 ) {
     let window = window_query.get_single().unwrap();
@@ -38,9 +41,9 @@ pub fn spawn_stars(
         };
 
         commands.spawn((
-            SpriteBundle {
+            SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                texture: asset_server.load("sprites/star.png"),
+                scene: model_assets.star.clone(),
                 ..default()
             },
             Star {
@@ -52,7 +55,7 @@ pub fn spawn_stars(
 
 pub fn despawn_stars(mut commands: Commands, star_query: Query<Entity, With<Star>>) {
     for star_entity in star_query.iter() {
-        commands.entity(star_entity).despawn();
+        commands.entity(star_entity).despawn_recursive();
     }
 }
 
@@ -63,7 +66,7 @@ pub fn tick_star_spawn_timer(mut star_spawn_timer: ResMut<StarSpawnTimer>, time:
 pub fn spawn_stars_over_time(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    asset_server: Res<AssetServer>,
+    model_assets: Res<ModelAssets>,
     star_spawn_timer: Res<StarSpawnTimer>,
     audio_clips: Res<AudioClipAssets>,
 ) {
@@ -73,9 +76,9 @@ pub fn spawn_stars_over_time(
         let random_y = fastrand::f32() * window.height();
 
         commands.spawn((
-            SpriteBundle {
+            SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                texture: asset_server.load("sprites/star.png"),
+                scene: model_assets.star.clone(),
                 ..default()
             },
             Star {

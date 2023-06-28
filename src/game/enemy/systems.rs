@@ -1,16 +1,16 @@
 use bevy::{
     prelude::{
-        default, AssetServer, Commands, Entity, EventWriter, Query, Res, ResMut, Transform, Vec2,
-        Vec3, With,
+        default, Commands, DespawnRecursiveExt, Entity, EventWriter, Query, Res, ResMut, Transform,
+        Vec2, Vec3, With,
     },
-    sprite::SpriteBundle,
+    scene::SceneBundle,
     time::Time,
     window::{PrimaryWindow, Window},
 };
 
 use crate::{
     events::AudioEvent,
-    game::{audio::AudioClipAssets, player::PLAYER_SIZE},
+    game::{audio::AudioClipAssets, models::ModelAssets, player::PLAYER_SIZE},
 };
 
 use super::{
@@ -20,7 +20,7 @@ use super::{
 pub fn spawn_enemies(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    asset_server: Res<AssetServer>,
+    model_assets: Res<ModelAssets>,
     audio_clips: Res<AudioClipAssets>,
 ) {
     let window = window_query.get_single().unwrap();
@@ -44,9 +44,9 @@ pub fn spawn_enemies(
         };
 
         commands.spawn((
-            SpriteBundle {
+            SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                texture: asset_server.load("sprites/ball_red_large.png"),
+                scene: model_assets.enemy.clone(),
                 ..default()
             },
             Enemy {
@@ -60,7 +60,7 @@ pub fn spawn_enemies(
 
 pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<Enemy>>) {
     for enemy_entity in enemy_query.iter() {
-        commands.entity(enemy_entity).despawn();
+        commands.entity(enemy_entity).despawn_recursive();
     }
 }
 
@@ -149,7 +149,7 @@ pub fn tick_enemy_spawn_timer(mut enemy_spawn_timer: ResMut<EnemySpawnTimer>, ti
 pub fn spawn_enemies_over_time(
     mut commands: Commands,
     window_query: Query<&Window, With<PrimaryWindow>>,
-    asset_server: Res<AssetServer>,
+    model_assets: Res<ModelAssets>,
     enemy_spawn_timer: Res<EnemySpawnTimer>,
     audio_clips: Res<AudioClipAssets>,
 ) {
@@ -160,9 +160,9 @@ pub fn spawn_enemies_over_time(
         let random_y = fastrand::f32() * window.height();
 
         commands.spawn((
-            SpriteBundle {
+            SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                texture: asset_server.load("sprites/ball_red_large.png"),
+                scene: model_assets.enemy.clone(),
                 ..default()
             },
             Enemy {
