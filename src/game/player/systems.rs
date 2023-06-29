@@ -1,12 +1,12 @@
 use bevy::prelude::{
-    default, Commands, DespawnRecursiveExt, Entity, EventWriter, Input, KeyCode, Query, Res,
-    ResMut, ScanCode, Transform, Vec3, With,
+    default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter, Input,
+    KeyCode, Query, Res, ResMut, ScanCode, Transform, Vec3, With, Without,
 };
 use bevy::scene::SceneBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 
-use super::components::Player;
+use super::components::{Player, PlayerAnimator};
 use crate::events::{AudioEvent, GameOverEvent};
 use crate::game::audio::AudioClipAssets;
 use crate::game::enemy::components::Enemy;
@@ -15,6 +15,7 @@ use crate::game::models::ModelAssets;
 use crate::game::score::resources::Score;
 use crate::game::star::components::Star;
 use crate::game::star::STAR_SIZE;
+use crate::game::utils::find_animation_player;
 
 pub const PLAYER_SPEED: f32 = 500.0;
 pub const PLAYER_SIZE: f32 = 64.0; // This is the player sprite size.
@@ -39,14 +40,39 @@ pub fn spawn_player(
 
     commands.spawn((
         SceneBundle {
-            scene: model_assets.player.clone(),
+            scene: model_assets.player.clone_weak(),
             transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
             ..default()
         },
         Player {
-            explosion_audio_clip: audio_clips.explosion.clone(),
+            explosion_audio_clip: audio_clips.explosion.clone_weak(),
+            idle_animation_clip: model_assets.player_animation.clone_weak(),
         },
     ));
+}
+
+pub fn init_player_animation(
+    player_query: Query<(Entity, &Player), (With<Player>, Without<PlayerAnimator>)>,
+    children_query: Query<&Children>,
+    mut animation_player_query: Query<&mut AnimationPlayer>,
+    mut commands: Commands,
+) {
+    for (player_entity, player) in player_query.iter() {
+        if let Some(animation_player_entity) =
+            find_animation_player(player_entity, &children_query, &animation_player_query)
+        {
+            if let Ok(mut animation_player) =
+                animation_player_query.get_mut(animation_player_entity)
+            {
+                commands.entity(player_entity).insert(PlayerAnimator {
+                    animation_player_entity,
+                });
+                animation_player
+                    .play(player.idle_animation_clip.clone_weak())
+                    .repeat();
+            }
+        }
+    }
 }
 
 pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {

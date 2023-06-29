@@ -1,12 +1,16 @@
 use bevy::prelude::{
-    App, IntoSystemAppConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate, Plugin,
+    App, IntoSystemAppConfig, IntoSystemConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate,
+    Plugin,
 };
 
 use crate::AppState;
 
 use self::{
     resources::StarSpawnTimer,
-    systems::{despawn_stars, spawn_stars, spawn_stars_over_time, tick_star_spawn_timer},
+    systems::{
+        despawn_stars, init_star_animation, spawn_stars, spawn_stars_over_time,
+        tick_star_spawn_timer,
+    },
 };
 
 use super::SimulationState;
@@ -26,6 +30,7 @@ impl Plugin for StarPlugin {
             // On Enter State
             .add_system(spawn_stars.in_schedule(OnEnter(AppState::Game)))
             // Systems
+            .add_system(init_star_animation.in_set(OnUpdate(AppState::Game)))
             .add_systems(
                 (tick_star_spawn_timer, spawn_stars_over_time)
                     .in_set(OnUpdate(AppState::Game))

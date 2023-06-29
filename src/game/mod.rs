@@ -6,6 +6,7 @@ mod score;
 mod star;
 mod systems;
 mod ui;
+mod utils;
 
 use bevy::prelude::{
     in_state, App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, Plugin, States,

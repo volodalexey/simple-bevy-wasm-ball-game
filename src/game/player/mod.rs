@@ -6,8 +6,8 @@ use bevy::prelude::{
 use crate::AppState;
 
 use self::systems::{
-    confine_player_movement, despawn_player, enemy_hit_player, player_hit_star, player_movement,
-    spawn_player,
+    confine_player_movement, despawn_player, enemy_hit_player, init_player_animation,
+    player_hit_star, player_movement, spawn_player,
 };
 
 use super::SimulationState;
@@ -33,6 +33,7 @@ impl Plugin for PlayerPlugin {
             // On Enter State
             .add_system(spawn_player.in_schedule(OnEnter(AppState::Game)))
             // Systems
+            .add_system(init_player_animation.in_set(OnUpdate(AppState::Game)))
             .add_systems(
                 (
                     player_movement.in_set(MovementSystemSet),

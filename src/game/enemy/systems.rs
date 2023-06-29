@@ -1,7 +1,7 @@
 use bevy::{
     prelude::{
-        default, Commands, DespawnRecursiveExt, Entity, EventWriter, Query, Res, ResMut, Transform,
-        Vec2, Vec3, With,
+        default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter,
+        Query, Res, ResMut, Transform, Vec2, Vec3, With, Without,
     },
     scene::SceneBundle,
     time::Time,
@@ -10,11 +10,16 @@ use bevy::{
 
 use crate::{
     events::AudioEvent,
-    game::{audio::AudioClipAssets, models::ModelAssets, player::PLAYER_SIZE},
+    game::{
+        audio::AudioClipAssets, models::ModelAssets, player::PLAYER_SIZE,
+        utils::find_animation_player,
+    },
 };
 
 use super::{
-    components::Enemy, resources::EnemySpawnTimer, ENEMY_SIZE, ENEMY_SPEED, NUMBER_OF_ENEMIES,
+    components::{Enemy, EnemyAnimator},
+    resources::EnemySpawnTimer,
+    ENEMY_SIZE, ENEMY_SPEED, NUMBER_OF_ENEMIES,
 };
 
 pub fn spawn_enemies(
@@ -53,8 +58,33 @@ pub fn spawn_enemies(
                 direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
                 bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
                 bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
+                idle_animation_clip: model_assets.enemy_animation.clone_weak(),
             },
         ));
+    }
+}
+
+pub fn init_enemy_animation(
+    enemy_query: Query<(Entity, &Enemy), (With<Enemy>, Without<EnemyAnimator>)>,
+    children_query: Query<&Children>,
+    mut animation_player_query: Query<&mut AnimationPlayer>,
+    mut commands: Commands,
+) {
+    for (enemy_entity, enemy) in enemy_query.iter() {
+        if let Some(animation_player_entity) =
+            find_animation_player(enemy_entity, &children_query, &animation_player_query)
+        {
+            if let Ok(mut animation_player) =
+                animation_player_query.get_mut(animation_player_entity)
+            {
+                commands.entity(enemy_entity).insert(EnemyAnimator {
+                    animation_player_entity,
+                });
+                animation_player
+                    .play(enemy.idle_animation_clip.clone_weak())
+                    .repeat();
+            }
+        }
     }
 }
 
@@ -169,6 +199,7 @@ pub fn spawn_enemies_over_time(
                 direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
                 bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
                 bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
+                idle_animation_clip: model_assets.player_animation.clone_weak(),
             },
         ));
     }

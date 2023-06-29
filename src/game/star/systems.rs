@@ -1,5 +1,6 @@
 use bevy::prelude::{
-    default, Commands, DespawnRecursiveExt, Entity, Query, Res, ResMut, Transform, With,
+    default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, Query, Res, ResMut,
+    Transform, With, Without,
 };
 use bevy::scene::SceneBundle;
 use bevy::time::Time;
@@ -9,8 +10,9 @@ use fastrand;
 use crate::game::audio::AudioClipAssets;
 use crate::game::models::ModelAssets;
 use crate::game::player::PLAYER_SIZE;
+use crate::game::utils::find_animation_player;
 
-use super::components::Star;
+use super::components::{Star, StarAnimator};
 use super::resources::StarSpawnTimer;
 use super::NUMBER_OF_STARS;
 
@@ -48,8 +50,33 @@ pub fn spawn_stars(
             },
             Star {
                 collect_audio_clip: audio_clips.star_collect.clone(),
+                idle_animation_clip: model_assets.star_animation.clone_weak(),
             },
         ));
+    }
+}
+
+pub fn init_star_animation(
+    star_query: Query<(Entity, &Star), (With<Star>, Without<StarAnimator>)>,
+    children_query: Query<&Children>,
+    mut animation_player_query: Query<&mut AnimationPlayer>,
+    mut commands: Commands,
+) {
+    for (star_entity, star) in star_query.iter() {
+        if let Some(animation_player_entity) =
+            find_animation_player(star_entity, &children_query, &animation_player_query)
+        {
+            if let Ok(mut animation_player) =
+                animation_player_query.get_mut(animation_player_entity)
+            {
+                commands.entity(star_entity).insert(StarAnimator {
+                    animation_player_entity,
+                });
+                animation_player
+                    .play(star.idle_animation_clip.clone_weak())
+                    .repeat();
+            }
+        }
     }
 }
 
@@ -83,6 +110,7 @@ pub fn spawn_stars_over_time(
             },
             Star {
                 collect_audio_clip: audio_clips.star_collect.clone(),
+                idle_animation_clip: model_assets.star_animation.clone_weak(),
             },
         ));
     }
