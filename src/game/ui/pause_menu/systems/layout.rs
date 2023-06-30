@@ -109,7 +109,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                             });
                         });
                     // Quit Button
-                    // #[cfg(not(target_arch = "wasm32"))]
+                    #[cfg(not(target_arch = "wasm32"))]
                     parent
                         .spawn((
                             ButtonBundle {

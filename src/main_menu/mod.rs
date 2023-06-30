@@ -22,7 +22,11 @@ impl Plugin for MainMenuPlugin {
             .add_system(spawn_main_menu.in_schedule(OnEnter(AppState::MainMenu)))
             // Systems
             .add_systems(
-                (interact_with_play_button, interact_with_quit_button)
+                (
+                    interact_with_play_button,
+                    #[cfg(not(target_arch = "wasm32"))]
+                    interact_with_quit_button,
+                )
                     .in_set(OnUpdate(AppState::MainMenu)),
             )
             // OnExit State Systems

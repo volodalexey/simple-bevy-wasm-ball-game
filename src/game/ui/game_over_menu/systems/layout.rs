@@ -113,6 +113,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                             });
                         });
                     // Quit Button
+                    #[cfg(not(target_arch = "wasm32"))]
                     parent
                         .spawn((
                             ButtonBundle {

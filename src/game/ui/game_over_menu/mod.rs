@@ -36,6 +36,7 @@ impl Plugin for GameOverMenuPlugin {
                 (
                     interact_with_restart_button,
                     interact_with_main_menu_button,
+                    #[cfg(not(target_arch = "wasm32"))]
                     interact_with_quit_button,
                 )
                     .in_set(OnUpdate(AppState::GameOver)),
