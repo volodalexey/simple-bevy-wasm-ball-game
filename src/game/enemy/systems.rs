@@ -1,11 +1,8 @@
-use std::time::{Duration, Instant};
-
 use bevy::{
     prelude::{
-        default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter,
-        Query, Res, ResMut, Transform, Vec2, Vec3, With, Without,
+        AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter, Query, Res,
+        ResMut, Transform, Vec2, Vec3, With, Without,
     },
-    scene::SceneBundle,
     time::Time,
     window::{PrimaryWindow, Window},
 };
@@ -13,13 +10,14 @@ use bevy::{
 use crate::{
     events::AudioEvent,
     game::{
-        audio::AudioClipAssets, models::ModelAssets, player::PLAYER_SIZE,
+        actor::BundledActor, audio::AudioClipAssets, models::ModelAssets, player::PLAYER_SIZE,
         utils::find_animation_player,
     },
 };
 
 use super::{
     components::{Enemy, EnemyAnimator},
+    enemy_ball::EnemyBallDefault,
     resources::EnemySpawnTimer,
     ENEMY_SIZE, ENEMY_SPEED, NUMBER_OF_ENEMIES,
 };
@@ -49,22 +47,9 @@ pub fn spawn_enemies(
         } else {
             random_y_full
         };
+        let spawn_position = Vec2::new(random_x, random_y);
 
-        commands.spawn((
-            SceneBundle {
-                transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.enemy.clone_weak(),
-                ..default()
-            },
-            Enemy {
-                direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
-                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone_weak(),
-                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone_weak(),
-                idle_animation_clip: model_assets.enemy_animation.clone_weak(),
-                spawn_time: Instant::now(),
-                delay_animation_start: Duration::from_millis(fastrand::u64(0..2000_u64)),
-            },
-        ));
+        EnemyBallDefault::spawn_bundle(&mut commands, &audio_clips, &model_assets, spawn_position);
     }
 }
 
@@ -196,20 +181,8 @@ pub fn spawn_enemies_over_time(
         let random_x = fastrand::f32() * window.width();
         let random_y = fastrand::f32() * window.height();
 
-        commands.spawn((
-            SceneBundle {
-                transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.enemy.clone_weak(),
-                ..default()
-            },
-            Enemy {
-                direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
-                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone_weak(),
-                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone_weak(),
-                idle_animation_clip: model_assets.player_animation.clone_weak(),
-                spawn_time: Instant::now(),
-                delay_animation_start: Duration::default(),
-            },
-        ));
+        let spawn_position = Vec2::new(random_x, random_y);
+
+        EnemyBallDefault::spawn_bundle(&mut commands, &audio_clips, &model_assets, spawn_position);
     }
 }

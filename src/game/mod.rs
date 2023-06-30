@@ -1,3 +1,4 @@
+mod actor;
 mod audio;
 mod enemy;
 mod models;

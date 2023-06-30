@@ -15,6 +15,7 @@ use self::{
 
 use super::SimulationState;
 
+mod collectable_star;
 pub mod components;
 mod resources;
 mod systems;

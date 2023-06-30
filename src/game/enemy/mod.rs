@@ -16,6 +16,7 @@ use self::{
 use super::SimulationState;
 
 pub mod components;
+mod enemy_ball;
 pub mod resources;
 mod systems;
 

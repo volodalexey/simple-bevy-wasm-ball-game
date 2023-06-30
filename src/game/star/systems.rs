@@ -1,19 +1,18 @@
-use std::time::{Duration, Instant};
-
 use bevy::prelude::{
-    default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, Query, Res, ResMut,
-    Transform, With, Without,
+    AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, Query, Res, ResMut, Vec2,
+    With, Without,
 };
-use bevy::scene::SceneBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 use fastrand;
 
+use crate::game::actor::BundledActor;
 use crate::game::audio::AudioClipAssets;
 use crate::game::models::ModelAssets;
 use crate::game::player::PLAYER_SIZE;
 use crate::game::utils::find_animation_player;
 
+use super::collectable_star::CollectableStarDefault;
 use super::components::{Star, StarAnimator};
 use super::resources::StarSpawnTimer;
 use super::NUMBER_OF_STARS;
@@ -43,20 +42,14 @@ pub fn spawn_stars(
         } else {
             random_y_full
         };
+        let spawn_position = Vec2::new(random_x, random_y);
 
-        commands.spawn((
-            SceneBundle {
-                transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.star.clone_weak(),
-                ..default()
-            },
-            Star {
-                collect_audio_clip: audio_clips.star_collect.clone_weak(),
-                idle_animation_clip: model_assets.star_animation.clone_weak(),
-                spawn_time: Instant::now(),
-                delay_animation_start: Duration::from_millis(fastrand::u64(0..2000_u64)),
-            },
-        ));
+        CollectableStarDefault::spawn_bundle(
+            &mut commands,
+            &audio_clips,
+            &model_assets,
+            spawn_position,
+        );
     }
 }
 
@@ -109,18 +102,13 @@ pub fn spawn_stars_over_time(
         let random_x = fastrand::f32() * window.width();
         let random_y = fastrand::f32() * window.height();
 
-        commands.spawn((
-            SceneBundle {
-                transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.star.clone_weak(),
-                ..default()
-            },
-            Star {
-                collect_audio_clip: audio_clips.star_collect.clone_weak(),
-                idle_animation_clip: model_assets.star_animation.clone_weak(),
-                spawn_time: Instant::now(),
-                delay_animation_start: Duration::default(),
-            },
-        ));
+        let spawn_position = Vec2::new(random_x, random_y);
+
+        CollectableStarDefault::spawn_bundle(
+            &mut commands,
+            &audio_clips,
+            &model_assets,
+            spawn_position,
+        );
     }
 }

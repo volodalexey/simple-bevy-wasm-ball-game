@@ -1,13 +1,14 @@
 use bevy::prelude::{
-    default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter, Input,
-    KeyCode, Query, Res, ResMut, ScanCode, Transform, Vec3, With, Without,
+    AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter, Input, KeyCode,
+    Query, Res, ResMut, ScanCode, Transform, Vec2, Vec3, With, Without,
 };
-use bevy::scene::SceneBundle;
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 
 use super::components::{Player, PlayerAnimator};
+use super::player_ball::PlayerBallDefault;
 use crate::events::{AudioEvent, GameOverEvent};
+use crate::game::actor::BundledActor;
 use crate::game::audio::AudioClipAssets;
 use crate::game::enemy::components::Enemy;
 use crate::game::enemy::ENEMY_SIZE;
@@ -37,18 +38,9 @@ pub fn spawn_player(
     audio_clips: Res<AudioClipAssets>,
 ) {
     let window = window_query.get_single().unwrap();
+    let spawn_position = Vec2::new(window.width() / 2.0, window.height() / 2.0);
 
-    commands.spawn((
-        SceneBundle {
-            scene: model_assets.player.clone_weak(),
-            transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, 0.0),
-            ..default()
-        },
-        Player {
-            explosion_audio_clip: audio_clips.explosion.clone_weak(),
-            idle_animation_clip: model_assets.player_animation.clone_weak(),
-        },
-    ));
+    PlayerBallDefault::spawn_bundle(&mut commands, &audio_clips, &model_assets, spawn_position);
 }
 
 pub fn init_player_animation(

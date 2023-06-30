@@ -13,6 +13,7 @@ use self::systems::{
 use super::SimulationState;
 
 pub mod components;
+mod player_ball;
 mod systems;
 
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
