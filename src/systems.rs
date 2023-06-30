@@ -1,8 +1,7 @@
 use bevy::app::AppExit;
 use bevy::prelude::{
-    default, Camera3dBundle, Color, Commands, DirectionalLight, DirectionalLightBundle,
-    EventReader, EventWriter, Input, KeyCode, NextState, OrthographicProjection, Projection, Query,
-    Res, ResMut, State, Transform, Vec3, With,
+    default, Color, Commands, DirectionalLight, DirectionalLightBundle, EventReader, EventWriter,
+    Input, KeyCode, NextState, Query, Res, ResMut, State, Transform, Vec3, With,
 };
 use bevy::window::{PrimaryWindow, Window};
 
@@ -10,23 +9,6 @@ use crate::events::GameOverEvent;
 use crate::AppState;
 
 pub const CAMERA_FAR: f32 = 1000.0;
-
-pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
-    let window = window_query.get_single().unwrap();
-
-    commands.spawn(Camera3dBundle {
-        projection: Projection::Orthographic(OrthographicProjection {
-            far: CAMERA_FAR + 100.0,
-            ..default()
-        }),
-        transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, CAMERA_FAR)
-            .looking_at(
-                Vec3::new(window.width() / 2.0, window.height() / 2.0, 0.0),
-                Vec3::Y,
-            ),
-        ..default()
-    });
-}
 
 pub fn spawn_lights(mut commands: Commands, window_query: Query<&Window, With<PrimaryWindow>>) {
     let window = window_query.get_single().unwrap();

@@ -2,4 +2,5 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "rust-lang.rust-analyzer",
   "rust-analyzer.showUnlinkedFileNotification": false
+  // rust-analyzer.cargo.target wasm32
 }

@@ -2,28 +2,26 @@ mod events;
 mod game;
 mod main_menu;
 mod systems;
+mod window_camera;
 
-use bevy::{
-    prelude::{App, States},
-    DefaultPlugins,
-};
+use bevy::prelude::{App, States};
 use game::GamePlugin;
 use main_menu::MainMenuPlugin;
 use systems::{
-    exit_game, handle_game_over, spawn_camera, spawn_lights, transition_to_game_state,
+    exit_game, handle_game_over, spawn_lights, transition_to_game_state,
     transition_to_main_menu_state,
 };
+use window_camera::WindowCameraPlugin;
 
 fn main() {
     App::new()
         // Bevy Plugins
-        .add_plugins(DefaultPlugins)
+        .add_plugin(WindowCameraPlugin)
         .add_state::<AppState>()
         // My Plugins
         .add_plugin(MainMenuPlugin)
         .add_plugin(GamePlugin)
         // Startup Systems
-        .add_startup_system(spawn_camera)
         .add_startup_system(spawn_lights)
         // Systems
         .add_system(transition_to_game_state)
