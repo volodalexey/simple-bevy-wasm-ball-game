@@ -6,13 +6,15 @@ use bevy::prelude::{
 use crate::AppState;
 
 use self::systems::{
-    confine_player_movement, despawn_player, enemy_hit_player, init_player_animation,
-    player_hit_star, player_movement, spawn_player,
+    interactions::{enemy_hit_player, player_hit_star},
+    lifecycles::{despawn_player, init_player_animation, spawn_player},
+    movement::{confine_player_movement, player_movement},
 };
 
 use super::SimulationState;
 
 pub mod components;
+mod input;
 mod player_ball;
 mod systems;
 
@@ -22,6 +24,7 @@ pub struct MovementSystemSet;
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone)]
 pub struct ConfinementSystemSet;
 
+pub const PLAYER_SPEED: f32 = 500.0;
 pub const PLAYER_SIZE: f32 = 64.0; // This is the player sprite size.
 
 pub struct PlayerPlugin;

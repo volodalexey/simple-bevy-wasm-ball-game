@@ -1,5 +1,5 @@
 use bevy::{
-    prelude::{default, Bundle, Commands, Res, Transform, Vec2},
+    prelude::{default, Bundle, Commands, Res, Transform, Vec2, Vec3},
     scene::SceneBundle,
 };
 
@@ -30,6 +30,7 @@ impl BundledActor<PlayerActorBundle> for PlayerBallDefault {
             player: Player {
                 explosion_audio_clip: audio_clips.explosion.clone_weak(),
                 idle_animation_clip: model_assets.player_animation.clone_weak(),
+                input_direction: Vec3::ZERO,
             },
         };
     }
