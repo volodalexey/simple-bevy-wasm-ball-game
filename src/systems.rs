@@ -15,7 +15,10 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
     let window = window_query.get_single().unwrap();
 
     commands.spawn(Camera3dBundle {
-        projection: Projection::Orthographic(OrthographicProjection { ..default() }),
+        projection: Projection::Orthographic(OrthographicProjection {
+            far: CAMERA_FAR + 100.0,
+            ..default()
+        }),
         transform: Transform::from_xyz(window.width() / 2.0, window.height() / 2.0, CAMERA_FAR)
             .looking_at(
                 Vec3::new(window.width() / 2.0, window.height() / 2.0, 0.0),

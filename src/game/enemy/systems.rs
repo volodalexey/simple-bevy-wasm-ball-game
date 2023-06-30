@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use bevy::{
     prelude::{
         default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventWriter,
@@ -51,14 +53,16 @@ pub fn spawn_enemies(
         commands.spawn((
             SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.enemy.clone(),
+                scene: model_assets.enemy.clone_weak(),
                 ..default()
             },
             Enemy {
                 direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
-                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
-                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
+                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone_weak(),
+                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone_weak(),
                 idle_animation_clip: model_assets.enemy_animation.clone_weak(),
+                spawn_time: Instant::now(),
+                delay_animation_start: Duration::from_millis(fastrand::u64(0..2000_u64)),
             },
         ));
     }
@@ -71,6 +75,9 @@ pub fn init_enemy_animation(
     mut commands: Commands,
 ) {
     for (enemy_entity, enemy) in enemy_query.iter() {
+        if enemy.spawn_time.elapsed() < enemy.delay_animation_start {
+            continue;
+        }
         if let Some(animation_player_entity) =
             find_animation_player(enemy_entity, &children_query, &animation_player_query)
         {
@@ -131,9 +138,9 @@ pub fn update_enemy_direction(
         if direction_changed {
             // Randomly play one of the two sound effects.
             let clip = if fastrand::f32() > 0.5 {
-                enemy.bounce_audio_clip_1.clone()
+                enemy.bounce_audio_clip_1.clone_weak()
             } else {
-                enemy.bounce_audio_clip_2.clone()
+                enemy.bounce_audio_clip_2.clone_weak()
             };
             audio_event.send(AudioEvent { clip })
         }
@@ -192,14 +199,16 @@ pub fn spawn_enemies_over_time(
         commands.spawn((
             SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.enemy.clone(),
+                scene: model_assets.enemy.clone_weak(),
                 ..default()
             },
             Enemy {
                 direction: Vec2::new(fastrand::f32(), fastrand::f32()).normalize(),
-                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone(),
-                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone(),
+                bounce_audio_clip_1: audio_clips.enemy_bounds_1.clone_weak(),
+                bounce_audio_clip_2: audio_clips.enemy_bounds_2.clone_weak(),
                 idle_animation_clip: model_assets.player_animation.clone_weak(),
+                spawn_time: Instant::now(),
+                delay_animation_start: Duration::default(),
             },
         ));
     }

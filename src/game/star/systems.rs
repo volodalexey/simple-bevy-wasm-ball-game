@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use bevy::prelude::{
     default, AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, Query, Res, ResMut,
     Transform, With, Without,
@@ -45,12 +47,14 @@ pub fn spawn_stars(
         commands.spawn((
             SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.star.clone(),
+                scene: model_assets.star.clone_weak(),
                 ..default()
             },
             Star {
-                collect_audio_clip: audio_clips.star_collect.clone(),
+                collect_audio_clip: audio_clips.star_collect.clone_weak(),
                 idle_animation_clip: model_assets.star_animation.clone_weak(),
+                spawn_time: Instant::now(),
+                delay_animation_start: Duration::from_millis(fastrand::u64(0..2000_u64)),
             },
         ));
     }
@@ -63,6 +67,9 @@ pub fn init_star_animation(
     mut commands: Commands,
 ) {
     for (star_entity, star) in star_query.iter() {
+        if star.spawn_time.elapsed() < star.delay_animation_start {
+            continue;
+        }
         if let Some(animation_player_entity) =
             find_animation_player(star_entity, &children_query, &animation_player_query)
         {
@@ -105,12 +112,14 @@ pub fn spawn_stars_over_time(
         commands.spawn((
             SceneBundle {
                 transform: Transform::from_xyz(random_x, random_y, 0.0),
-                scene: model_assets.star.clone(),
+                scene: model_assets.star.clone_weak(),
                 ..default()
             },
             Star {
-                collect_audio_clip: audio_clips.star_collect.clone(),
+                collect_audio_clip: audio_clips.star_collect.clone_weak(),
                 idle_animation_clip: model_assets.star_animation.clone_weak(),
+                spawn_time: Instant::now(),
+                delay_animation_start: Duration::default(),
             },
         ));
     }
