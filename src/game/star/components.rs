@@ -1,6 +1,9 @@
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
-use bevy::prelude::{AnimationClip, AudioSource, Component, Entity, Handle};
+use bevy::{
+    prelude::{AnimationClip, AudioSource, Component, Entity, Handle},
+    utils::Instant,
+};
 
 #[derive(Component)]
 pub struct Star {

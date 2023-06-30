@@ -1,8 +1,9 @@
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use bevy::{
     prelude::{default, Bundle, Commands, Res, Transform, Vec2},
     scene::SceneBundle,
+    utils::Instant,
 };
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
