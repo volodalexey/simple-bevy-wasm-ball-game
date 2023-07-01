@@ -1,7 +1,7 @@
 use bevy::{
     prelude::{
-        default, Camera3dBundle, Commands, EventReader, OrthographicProjection, Projection, Query,
-        Transform, Vec3, With,
+        default, info, Camera3dBundle, Commands, EventReader, OrthographicProjection, Projection,
+        Query, Transform, Vec3, With,
     },
     window::{PrimaryWindow, Window, WindowResized},
 };
@@ -39,6 +39,6 @@ pub fn on_resize_window(
         camera_transform.translation.x = e.width / 2.0;
         camera_transform.translation.y = e.height / 2.0;
         // When resolution is being changed
-        println!("{:.1} x {:.1}", e.width, e.height);
+        info!("Resize {:.1} x {:.1}", e.width, e.height);
     }
 }

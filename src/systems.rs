@@ -1,7 +1,7 @@
 use bevy::app::AppExit;
 use bevy::prelude::{
-    default, Color, Commands, DirectionalLight, DirectionalLightBundle, EventReader, EventWriter,
-    Input, KeyCode, NextState, Query, Res, ResMut, State, Transform, Vec3, With,
+    default, info, Color, Commands, DirectionalLight, DirectionalLightBundle, EventReader,
+    EventWriter, Input, KeyCode, NextState, Query, Res, ResMut, State, Transform, Vec3, With,
 };
 use bevy::window::{PrimaryWindow, Window};
 
@@ -36,7 +36,7 @@ pub fn transition_to_game_state(
     if keyboard_input.just_pressed(KeyCode::G) {
         if app_state.0 != AppState::Game {
             app_state_next_state.set(AppState::Game);
-            println!("Entered AppState::Game");
+            info!("Entered AppState::Game");
         }
     }
 }
@@ -49,7 +49,7 @@ pub fn transition_to_main_menu_state(
     if keyboard_input.just_pressed(KeyCode::M) {
         if app_state.0 != AppState::MainMenu {
             app_state_next_state.set(AppState::MainMenu);
-            println!("Entered AppState::MainMenu");
+            info!("Entered AppState::MainMenu");
         }
     }
 }
@@ -60,7 +60,7 @@ pub fn handle_game_over(
 ) {
     for _event in game_over_event_reader.iter() {
         app_state_next_state.set(AppState::GameOver);
-        println!("Entered AppState::GameOver");
+        info!("Entered AppState::GameOver");
     }
 }
 

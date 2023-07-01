@@ -6,6 +6,13 @@ async function run() {
         loader.parentElement?.removeChild(loader)
     }
     init()
+
+    // disable touch context menu
+    document.addEventListener('contextmenu', (e) => {
+        if (e.pointerType === "touch") {
+            e.preventDefault();
+        }
+    });
 }
 
 run().catch((err) => {

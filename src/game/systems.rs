@@ -1,4 +1,4 @@
-use bevy::prelude::{Input, KeyCode, NextState, Res, ResMut, State};
+use bevy::prelude::{info, Input, KeyCode, NextState, Res, ResMut, State};
 
 use crate::game::SimulationState;
 
@@ -18,11 +18,11 @@ pub fn toggle_simulation(
     if keyboard_input.just_pressed(KeyCode::Space) {
         if simulation_state.0 == SimulationState::Running {
             simulation_state_next_state.set(SimulationState::Paused);
-            println!("Simulation Paused.");
+            info!("Simulation Paused.");
         }
         if simulation_state.0 == SimulationState::Paused {
             simulation_state_next_state.set(SimulationState::Running);
-            println!("Simulation Running.");
+            info!("Simulation Running.");
         }
     }
 }

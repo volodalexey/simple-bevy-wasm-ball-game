@@ -76,7 +76,7 @@ Or build and optimize
 24682460    simple-bevy-wasm-ball-game_bg.wasm
    88108    simple-bevy-wasm-ball-game.js
 
-### Use Optimization
+### Use Optimization (audio initialization do not work)
 
 14901228    simple-bevy-wasm-ball-game_bg.wasm
    88108    simple-bevy-wasm-ball-game.js
