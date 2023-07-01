@@ -1,8 +1,14 @@
-use bevy::app::AppExit;
-use bevy::prelude::{Changed, EventWriter, NextState, Query, ResMut, With};
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use crate::main_menu::components::QuitButton;
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use bevy::{app::AppExit, prelude::EventWriter};
+
+use bevy::prelude::{Changed, NextState, Query, ResMut, With};
 use bevy::ui::{BackgroundColor, Interaction};
 
-use crate::main_menu::components::{PlayButton, QuitButton};
+use crate::main_menu::components::PlayButton;
 use crate::main_menu::styles::{HOVERED_BUTTON_COLOR, NORMAL_BUTTON_COLOR, PRESSED_BUTTON_COLOR};
 use crate::AppState;
 
@@ -29,6 +35,8 @@ pub fn interact_with_play_button(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(dead_code)]
 pub fn interact_with_quit_button(
     mut app_exit_event_writer: EventWriter<AppExit>,
     mut button_query: Query<

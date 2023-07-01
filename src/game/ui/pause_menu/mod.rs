@@ -8,10 +8,12 @@ use bevy::prelude::{
 
 use crate::{game::SimulationState, AppState};
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use self::systems::interactions::interact_with_quit_button;
+
 use self::systems::{
-    interactions::{
-        interact_with_main_menu_button, interact_with_quit_button, interact_with_resume_button,
-    },
+    interactions::{interact_with_main_menu_button, interact_with_resume_button},
     layout::{despawn_pause_menu, spawn_pause_menu},
 };
 
@@ -28,6 +30,7 @@ impl Plugin for PauseMenuPlugin {
                     interact_with_resume_button,
                     interact_with_main_menu_button,
                     #[cfg(not(target_arch = "wasm32"))]
+                    #[allow(dead_code)]
                     interact_with_quit_button,
                 )
                     .in_set(OnUpdate(SimulationState::Paused)),

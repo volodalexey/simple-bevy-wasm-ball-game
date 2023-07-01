@@ -6,8 +6,12 @@ use bevy::{
     text::{Text, TextAlignment, TextSection},
 };
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use crate::main_menu::components::QuitButton;
+
 use crate::main_menu::{
-    components::{MainMenu, PlayButton, QuitButton},
+    components::{MainMenu, PlayButton},
     styles::{
         get_button_text_style, get_title_text_style, BUTTON_STYLE, IMAGE_STYLE, MAIN_MENU_STYLE,
         NORMAL_BUTTON_COLOR, TITLE_STYLE,

@@ -7,8 +7,12 @@ use bevy::{
     ui::{Style, ZIndex},
 };
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use crate::game::ui::game_over_menu::components::QuitButton;
+
 use crate::game::ui::game_over_menu::{
-    components::{FinalScoreText, GameOverMenu, MainMenuButton, QuitButton, RestartButton},
+    components::{FinalScoreText, GameOverMenu, MainMenuButton, RestartButton},
     styles::{
         get_button_text_style, get_final_score_text_style, get_title_text_style, BACKGROUND_COLOR,
         BUTTON_STYLE, GAME_OVER_MENU_CONTAINER_STYLE, GAME_OVER_MENU_STYLE, NORMAL_BUTTON,

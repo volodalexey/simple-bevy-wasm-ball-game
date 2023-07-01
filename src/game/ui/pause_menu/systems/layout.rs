@@ -8,8 +8,12 @@ use bevy::{
     utils::default,
 };
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use crate::game::ui::pause_menu::components::QuitButton;
+
 use crate::game::ui::pause_menu::{
-    components::{MainMenuButton, PauseMenu, QuitButton, ResumeButton},
+    components::{MainMenuButton, PauseMenu, ResumeButton},
     styles::{
         get_button_text_style, get_title_text_style, BACKGROUND_COLOR, BUTTON_STYLE, NORMAL_BUTTON,
         PAUSE_MENU_CONTAINER_STYLE, PAUSE_MENU_STYLE,

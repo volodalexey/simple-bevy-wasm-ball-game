@@ -1,8 +1,14 @@
-use bevy::app::AppExit;
-use bevy::prelude::{Changed, EventWriter, NextState, Query, ResMut, With};
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use crate::game::ui::pause_menu::components::QuitButton;
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use bevy::{app::AppExit, prelude::EventWriter};
+
+use bevy::prelude::{Changed, NextState, Query, ResMut, With};
 use bevy::ui::{BackgroundColor, Interaction};
 
-use crate::game::ui::pause_menu::components::{MainMenuButton, QuitButton, ResumeButton};
+use crate::game::ui::pause_menu::components::{MainMenuButton, ResumeButton};
 use crate::game::ui::pause_menu::styles::{HOVERED_BUTTON, NORMAL_BUTTON, PRESSED_BUTTON};
 use crate::game::SimulationState;
 use crate::AppState;
@@ -53,6 +59,8 @@ pub fn interact_with_main_menu_button(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(dead_code)]
 pub fn interact_with_quit_button(
     mut app_exit_event_writer: EventWriter<AppExit>,
     mut button_query: Query<

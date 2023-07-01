@@ -9,10 +9,12 @@ use bevy::prelude::{
 
 use crate::AppState;
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use self::systems::interactions::interact_with_quit_button;
+
 use self::systems::{
-    interactions::{
-        interact_with_main_menu_button, interact_with_quit_button, interact_with_restart_button,
-    },
+    interactions::{interact_with_main_menu_button, interact_with_restart_button},
     layout::{despawn_game_over_menu, spawn_game_over_menu},
     updates::update_final_score_text,
 };
@@ -37,6 +39,7 @@ impl Plugin for GameOverMenuPlugin {
                     interact_with_restart_button,
                     interact_with_main_menu_button,
                     #[cfg(not(target_arch = "wasm32"))]
+                    #[allow(dead_code)]
                     interact_with_quit_button,
                 )
                     .in_set(OnUpdate(AppState::GameOver)),

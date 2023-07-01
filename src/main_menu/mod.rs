@@ -8,8 +8,12 @@ use bevy::prelude::{
 
 use crate::AppState;
 
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unused_imports)]
+use self::systems::interactions::interact_with_quit_button;
+
 use self::systems::{
-    interactions::{interact_with_play_button, interact_with_quit_button},
+    interactions::interact_with_play_button,
     layout::{despawn_main_menu, spawn_main_menu},
 };
 
@@ -25,6 +29,7 @@ impl Plugin for MainMenuPlugin {
                 (
                     interact_with_play_button,
                     #[cfg(not(target_arch = "wasm32"))]
+                    #[allow(dead_code)]
                     interact_with_quit_button,
                 )
                     .in_set(OnUpdate(AppState::MainMenu)),
