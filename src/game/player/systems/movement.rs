@@ -1,4 +1,6 @@
-use bevy::prelude::{Input, KeyCode, Query, Res, ScanCode, Transform, Vec3, With};
+use bevy::prelude::{
+    Input, KeyCode, MouseButton, Query, Res, ScanCode, Touches, Transform, Vec2, Vec3, With,
+};
 use bevy::time::Time;
 use bevy::window::{PrimaryWindow, Window};
 
@@ -19,11 +21,32 @@ pub enum EScanCode {
 pub fn player_movement(
     keyboard_input_scan_code: Res<Input<ScanCode>>,
     keyboard_input_key_code: Res<Input<KeyCode>>,
+    mouse_button_input: Res<Input<MouseButton>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+    touches: Res<Touches>,
     mut player_query: Query<&mut Transform, With<Player>>,
     time: Res<Time>,
 ) {
-    if let Ok(mut transform) = player_query.get_single_mut() {
+    if let Ok(mut player_transform) = player_query.get_single_mut() {
         let mut direction = Vec3::ZERO;
+        if let Ok(window) = window_query.get_single() {
+            if mouse_button_input.pressed(MouseButton::Left) {
+                if let Some(cursor_position) = window.cursor_position() {
+                    let diff_x = cursor_position.x - player_transform.translation.x;
+                    let diff_y = cursor_position.y - player_transform.translation.y;
+                    let normilized_diff = Vec3::new(diff_x, diff_y, 0.0).normalize_or_zero();
+                    direction += normilized_diff;
+                }
+            }
+            if let Some(touch_position) = touches.first_pressed_position() {
+                let touch_position =
+                    Vec2::new(touch_position.x, window.height() - touch_position.y); // tranform y coordinate to be the same as mouse coordinates
+                let diff_x = touch_position.x - player_transform.translation.x;
+                let diff_y = touch_position.y - player_transform.translation.y;
+                let normilized_diff = Vec3::new(diff_x, diff_y, 0.0).normalize_or_zero();
+                direction += normilized_diff;
+            }
+        }
 
         if keyboard_input_scan_code.any_pressed([
             ScanCode(EScanCode::A as u32),
@@ -57,7 +80,7 @@ pub fn player_movement(
 
         direction = direction.normalize_or_zero();
 
-        transform.translation += direction * PLAYER_SPEED * time.delta_seconds();
+        player_transform.translation += direction * PLAYER_SPEED * time.delta_seconds();
     }
 }
 
