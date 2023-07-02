@@ -7,10 +7,12 @@ body {
   margin: 0;
   font-family: 'Courier New', Courier, monospace;
   height: 100%;
+  overflow: hidden;
 }
 
 canvas {
   display: block;
+  touch-action: none;
 }
 
 .loader {
