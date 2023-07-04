@@ -3,7 +3,7 @@ use bevy::{
     time::{Timer, TimerMode},
 };
 
-pub const ENEMY_SPAWN_TIME: f32 = 5.0;
+pub const ENEMY_SPAWN_TIME: f32 = 10.0;
 
 #[derive(Resource)]
 pub struct EnemySpawnTimer {

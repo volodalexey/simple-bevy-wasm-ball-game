@@ -15,5 +15,5 @@ cp target/wasm32-unknown-unknown/bindgen/simple-bevy-wasm-ball-game_bg.wasm dist
 cp target/wasm32-unknown-unknown/bindgen/simple-bevy-wasm-ball-game.js dist/
 cp utils/wasm/index.html dist/
 cp utils/wasm/styles.css dist/
-cp utils/wasm/app.js dist/
+cp utils/wasm/*.js dist/
 ls -la dist
