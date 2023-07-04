@@ -57,26 +57,29 @@ Or build and optimize
 ## WASM build history
 
 ### Initial
-
-24603385    simple-bevy-wasm-ball-game_bg.wasm
-   88108    simple-bevy-wasm-ball-game.js
+- 24603385    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
 
 ### Replaced rand with fastrand
-
-24585077    simple-bevy-wasm-ball-game_bg.wasm
-   88108    simple-bevy-wasm-ball-game.js
+- 24585077    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
 
 ### Use 3d assets from glb file and animations
-
-24725317    simple-bevy-wasm-ball-game_bg.wasm
-   88108    simple-bevy-wasm-ball-game.js
+- 24725317    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
 
 ### Use Instant from bevy
-
-24682460    simple-bevy-wasm-ball-game_bg.wasm
-   88108    simple-bevy-wasm-ball-game.js
+- 24682460    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
 
 ### Use Optimization (audio initialization do not work)
+- 14901228    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
 
-14901228    simple-bevy-wasm-ball-game_bg.wasm
-   88108    simple-bevy-wasm-ball-game.js
+### Use Rapier physics engine
+- 26932957    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
+
+### Use optimizations for modules
+- 26990021    simple-bevy-wasm-ball-game_bg.wasm
+- 88108       simple-bevy-wasm-ball-game.js
