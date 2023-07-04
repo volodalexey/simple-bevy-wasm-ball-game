@@ -2,10 +2,7 @@ use bevy::prelude::{
     App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, OnUpdate, Plugin, Vec2,
 };
 
-use bevy_rapier2d::{
-    prelude::{NoUserData, RapierConfiguration, RapierPhysicsPlugin},
-    render::RapierDebugRenderPlugin,
-};
+use bevy_rapier2d::prelude::{NoUserData, RapierConfiguration, RapierPhysicsPlugin};
 
 use crate::AppState;
 
@@ -19,7 +16,6 @@ pub struct PhysicsPlugin;
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
-            .add_plugin(RapierDebugRenderPlugin::default())
             .insert_resource(RapierConfiguration {
                 gravity: Vec2::ZERO,
                 ..Default::default()
