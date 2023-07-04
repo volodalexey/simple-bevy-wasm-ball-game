@@ -1,11 +1,16 @@
 import init from './simple-bevy-wasm-ball-game.js'
 
 async function run() {
+    await init().catch(err => {
+        if (!err.message.startsWith("Using exceptions for control flow,")) {
+            throw err;
+        }
+    });
+
     const loader = document.querySelector('.loader')
     if (loader != null) {
         loader.parentElement?.removeChild(loader)
     }
-    init()
 
     // disable touch context menu
     document.addEventListener('contextmenu', (e) => {
@@ -16,6 +21,10 @@ async function run() {
 }
 
 run().catch((err) => {
+    const loader = document.querySelector('.loader')
+    if (loader != null) {
+        loader.parentElement?.removeChild(loader)
+    }
     console.error(err)
     const errorMessageDiv = document.querySelector('.error-message')
     if (errorMessageDiv != null) {
