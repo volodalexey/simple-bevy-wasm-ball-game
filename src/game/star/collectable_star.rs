@@ -5,15 +5,21 @@ use bevy::{
     scene::SceneBundle,
     utils::Instant,
 };
+use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody, Sensor};
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
 
-use super::components::Star;
+use super::{components::Star, STAR_SIZE};
 
 #[derive(Bundle)]
 pub struct StarActorBundle {
     pub star: Star,
     pub scene_bundle: SceneBundle,
+    pub rigid_body: RigidBody,
+    pub collider: Collider,
+    pub collision_group: CollisionGroups,
+    pub sensor: Sensor,
+    pub collision_events: ActiveEvents,
 }
 
 pub struct CollectableStarDefault;
@@ -36,6 +42,11 @@ impl BundledActor<StarActorBundle> for CollectableStarDefault {
                 spawn_time: Instant::now(),
                 delay_animation_start: Duration::from_millis(fastrand::u64(0..2000_u64)),
             },
+            rigid_body: RigidBody::Fixed,
+            collider: Collider::ball(STAR_SIZE / 2.0),
+            collision_group: CollisionGroups::new(Group::GROUP_4, Group::GROUP_2),
+            sensor: Sensor,
+            collision_events: ActiveEvents::COLLISION_EVENTS,
         };
     }
     fn spawn_bundle(

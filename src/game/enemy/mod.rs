@@ -8,8 +8,8 @@ use crate::AppState;
 use self::{
     resources::EnemySpawnTimer,
     systems::{
-        confine_enemy_movement, despawn_enemies, enemy_movement, init_enemy_animation,
-        spawn_enemies, spawn_enemies_over_time, tick_enemy_spawn_timer, update_enemy_direction,
+        despawn_enemies, enemy_collide, init_enemy_animation, spawn_enemies,
+        spawn_enemies_over_time, tick_enemy_spawn_timer,
     },
 };
 
@@ -23,6 +23,7 @@ mod systems;
 pub const NUMBER_OF_ENEMIES: usize = 4;
 pub const ENEMY_SPEED: f32 = 200.0;
 pub const ENEMY_SIZE: f32 = 64.0; // This is the enemy sprite size.
+pub const ENEMY_HEALTH_MIN: f32 = 4.0;
 
 pub struct EnemyPlugin;
 
@@ -31,19 +32,15 @@ impl Plugin for EnemyPlugin {
         app
             // Resources
             .init_resource::<EnemySpawnTimer>()
-            // Startup Systems
-            // .add_startup_system(spawn_enemies)
             // Enter State Systems
             .add_system(spawn_enemies.in_schedule(OnEnter(AppState::Game)))
             // Systems
             .add_system(init_enemy_animation.in_set(OnUpdate(AppState::Game)))
             .add_systems(
                 (
-                    enemy_movement,
-                    update_enemy_direction,
-                    confine_enemy_movement,
                     tick_enemy_spawn_timer,
                     spawn_enemies_over_time,
+                    enemy_collide,
                 )
                     .in_set(OnUpdate(AppState::Game))
                     .in_set(OnUpdate(SimulationState::Running)),

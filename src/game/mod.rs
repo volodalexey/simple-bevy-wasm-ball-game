@@ -2,6 +2,7 @@ mod actor;
 mod audio;
 mod enemy;
 mod models;
+mod physics;
 mod player;
 mod score;
 mod star;
@@ -23,6 +24,7 @@ use crate::{events::GameOverEvent, AppState};
 use self::{
     audio::GameAudioPlugin,
     models::ModelsPlugin,
+    physics::PhysicsPlugin,
     systems::{pause_simulation, resume_simulation, toggle_simulation},
 };
 
@@ -38,6 +40,7 @@ impl Plugin for GamePlugin {
             // OnEnter Systems
             .add_system(pause_simulation.in_schedule(OnEnter(AppState::Game)))
             // My Plugins
+            .add_plugin(PhysicsPlugin)
             .add_plugin(ModelsPlugin)
             .add_plugin(GameAudioPlugin)
             .add_plugin(EnemyPlugin)

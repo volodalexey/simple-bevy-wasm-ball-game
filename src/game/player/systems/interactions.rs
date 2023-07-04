@@ -1,61 +1,103 @@
 use bevy::prelude::{
-    Commands, DespawnRecursiveExt, Entity, EventWriter, Query, ResMut, Transform, With,
+    Commands, DespawnRecursiveExt, Entity, EventReader, EventWriter, Mut, Query, ResMut, Transform,
+    Vec3, With, Without,
 };
+use bevy_rapier2d::prelude::CollisionEvent;
 
 use crate::events::{AudioEvent, GameOverEvent};
-use crate::game::enemy::components::Enemy;
-use crate::game::enemy::ENEMY_SIZE;
-use crate::game::player::components::Player;
-use crate::game::player::PLAYER_SIZE;
+use crate::game::enemy::components::{Enemy, EnemyHealth};
+use crate::game::enemy::{ENEMY_HEALTH_MIN, ENEMY_SIZE};
+use crate::game::player::components::{Player, PlayerHealth};
+use crate::game::player::{PLAYER_HEALTH_MAX, PLAYER_HEALTH_MIN, PLAYER_SIZE};
 use crate::game::score::resources::Score;
 use crate::game::star::components::Star;
-use crate::game::star::STAR_SIZE;
 
-pub fn enemy_hit_player(
+pub fn player_collide(
     mut commands: Commands,
-    mut game_over_event_writer: EventWriter<GameOverEvent>,
-    mut player_query: Query<(Entity, &Transform, &Player), With<Player>>,
-    enemy_query: Query<(Entity, &Transform), With<Enemy>>,
-    mut audio_event: EventWriter<AudioEvent>,
-) {
-    if let Ok((player_entity, player_transform, player)) = player_query.get_single_mut() {
-        for (enemy_entity, enemy_transform) in enemy_query.iter() {
-            let distance = player_transform
-                .translation
-                .distance(enemy_transform.translation);
-            let player_radius = PLAYER_SIZE / 2.0;
-            let enemy_radius = ENEMY_SIZE / 2.0;
-            if distance < player_radius + enemy_radius {
-                audio_event.send(AudioEvent {
-                    clip: player.explosion_audio_clip.clone_weak(),
-                });
-                commands.entity(player_entity).despawn_recursive();
-                commands.entity(enemy_entity).despawn_recursive();
-                game_over_event_writer.send(GameOverEvent {});
-            }
-        }
-    }
-}
-
-pub fn player_hit_star(
-    mut commands: Commands,
-    player_query: Query<&Transform, With<Player>>,
-    star_query: Query<(Entity, &Transform, &Star), With<Star>>,
+    mut player_query: Query<
+        (Entity, &mut PlayerHealth, &Player, &mut Transform),
+        (With<Player>, Without<Enemy>),
+    >,
+    star_query: Query<(Entity, &Star), With<Star>>,
+    mut enemy_query: Query<
+        (Entity, &mut EnemyHealth, &mut Transform),
+        (With<Enemy>, Without<Player>),
+    >,
     mut score: ResMut<Score>,
     mut audio_event: EventWriter<AudioEvent>,
+    mut collision_reader: EventReader<CollisionEvent>,
+    mut game_over_event_writer: EventWriter<GameOverEvent>,
 ) {
-    if let Ok(player_transform) = player_query.get_single() {
-        for (star_entity, star_transform, star) in star_query.iter() {
-            let distance = player_transform
-                .translation
-                .distance(star_transform.translation);
-
-            if distance < PLAYER_SIZE / 2.0 + STAR_SIZE / 2.0 {
-                score.value += 1;
-                audio_event.send(AudioEvent {
-                    clip: star.collect_audio_clip.clone_weak(),
-                });
-                commands.entity(star_entity).despawn_recursive();
+    for collision_event in collision_reader.iter() {
+        if let CollisionEvent::Started(entity_a, entity_b, _) = collision_event {
+            let some_player: Option<(Entity, Mut<'_, PlayerHealth>, &Player, Mut<'_, Transform>)> =
+                if let Ok((player_entity, player_health, player, player_transform)) =
+                    player_query.get_mut(*entity_a)
+                {
+                    Some((player_entity, player_health, player, player_transform))
+                } else if let Ok((player_entity, player_health, player, player_transform)) =
+                    player_query.get_mut(*entity_b)
+                {
+                    Some((player_entity, player_health, player, player_transform))
+                } else {
+                    None
+                };
+            if let Some((player_entity, mut player_health, player, mut player_transform)) =
+                some_player
+            {
+                let some_enemy: Option<(Entity, Mut<'_, EnemyHealth>, Mut<'_, Transform>)> =
+                    if let Ok((enemy_entity, enemy_health, enemy_transform)) =
+                        enemy_query.get_mut(*entity_a)
+                    {
+                        Some((enemy_entity, enemy_health, enemy_transform))
+                    } else if let Ok((enemy_entity, enemy_health, enemy_transform)) =
+                        enemy_query.get_mut(*entity_b)
+                    {
+                        Some((enemy_entity, enemy_health, enemy_transform))
+                    } else {
+                        None
+                    };
+                if let Some((enemy_entity, mut enemy_health, mut enemy_transform)) = some_enemy {
+                    player_health.value -= 5.0;
+                    player_transform.scale = Vec3::splat(player_health.value / (PLAYER_SIZE / 2.0));
+                    enemy_health.value -= 5.0;
+                    enemy_transform.scale = Vec3::splat(enemy_health.value / (ENEMY_SIZE / 2.0));
+                    if player_health.value <= PLAYER_HEALTH_MIN {
+                        let clip = player.explosion_audio_clip.clone_weak();
+                        audio_event.send(AudioEvent { clip });
+                        commands.entity(player_entity).despawn_recursive();
+                        game_over_event_writer.send(GameOverEvent {});
+                    } else {
+                        let clip = player.shrink_audio_clip.clone_weak();
+                        audio_event.send(AudioEvent { clip });
+                    }
+                    if enemy_health.value <= ENEMY_HEALTH_MIN {
+                        let clip = player.explosion_audio_clip.clone_weak();
+                        audio_event.send(AudioEvent { clip });
+                        commands.entity(enemy_entity).despawn_recursive();
+                    }
+                }
+                let some_star: Option<(Entity, &Star)> = if let Ok(star) = star_query.get(*entity_a)
+                {
+                    Some(star)
+                } else if let Ok(star) = star_query.get(*entity_b) {
+                    Some(star)
+                } else {
+                    None
+                };
+                if let Some((star_entity, star)) = some_star {
+                    score.value += 1;
+                    player_health.value += 5.0;
+                    player_transform.scale = Vec3::splat(player_health.value / (PLAYER_SIZE / 2.0));
+                    if player_health.value >= PLAYER_HEALTH_MAX {
+                        player_health.value = PLAYER_HEALTH_MAX;
+                        player_transform.scale =
+                            Vec3::splat(player_health.value / (PLAYER_SIZE / 2.0));
+                    }
+                    let clip = star.collect_audio_clip.clone_weak();
+                    audio_event.send(AudioEvent { clip });
+                    commands.entity(star_entity).despawn_recursive();
+                }
             }
         }
     }
