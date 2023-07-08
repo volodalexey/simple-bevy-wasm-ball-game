@@ -6,7 +6,7 @@ use bevy::{
     time::Time,
     window::{PrimaryWindow, Window},
 };
-use bevy_rapier2d::prelude::CollisionEvent;
+use bevy_rapier3d::prelude::CollisionEvent;
 
 use crate::{
     events::AudioEvent,

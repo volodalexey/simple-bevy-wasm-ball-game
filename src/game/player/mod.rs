@@ -1,11 +1,12 @@
 use bevy::prelude::{
-    App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, OnUpdate, Plugin,
+    App, IntoSystemAppConfig, IntoSystemConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate,
+    Plugin,
 };
 
 use crate::AppState;
 
 use self::systems::{
-    interactions::player_collide,
+    interactions::{player_collide, tick_player_cooldown_timer},
     // interactions::{enemy_hit_player, player_hit_star},
     lifecycles::{despawn_player, init_player_animation, spawn_player},
     movement::player_movement,
@@ -18,11 +19,12 @@ mod input;
 mod player_ball;
 mod systems;
 
-pub const PLAYER_FORCE: f32 = 100.0;
+pub const PLAYER_FORCE: f32 = 10000000.0;
 pub const PLAYER_SPEED: f32 = 200.0;
 pub const PLAYER_SIZE: f32 = 64.0; // This is the player sprite size.
 pub const PLAYER_HEALTH_MAX: f32 = 100.0;
 pub const PLAYER_HEALTH_MIN: f32 = 4.0;
+pub const PLAYER_COOLDOWN_TIME: f32 = 0.5;
 
 pub struct PlayerPlugin;
 
@@ -34,13 +36,8 @@ impl Plugin for PlayerPlugin {
             .add_system(spawn_player.in_schedule(OnEnter(AppState::Game)))
             // Systems
             .add_system(init_player_animation.in_set(OnUpdate(AppState::Game)))
-            .add_system(
-                player_movement
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
-            )
-            .add_system(
-                player_collide
+            .add_systems(
+                (player_movement, tick_player_cooldown_timer, player_collide)
                     .in_set(OnUpdate(AppState::Game))
                     .in_set(OnUpdate(SimulationState::Running)),
             )

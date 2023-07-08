@@ -1,4 +1,7 @@
-use bevy::prelude::{AnimationClip, AudioSource, Component, Entity, Handle, Vec3};
+use bevy::{
+    prelude::{AnimationClip, AudioSource, Component, Entity, Handle, Vec3},
+    time::Timer,
+};
 
 #[derive(Component)]
 pub struct Player {
@@ -16,4 +19,10 @@ pub struct PlayerAnimator {
 #[derive(Component)]
 pub struct PlayerHealth {
     pub value: f32,
+}
+
+#[derive(Component)]
+pub struct PlayerCooldown {
+    pub timer: Timer,
+    pub started: bool,
 }

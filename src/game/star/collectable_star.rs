@@ -5,7 +5,7 @@ use bevy::{
     scene::SceneBundle,
     utils::Instant,
 };
-use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody, Sensor};
+use bevy_rapier3d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody, Sensor};
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
 

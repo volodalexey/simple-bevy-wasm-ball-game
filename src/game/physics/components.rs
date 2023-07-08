@@ -1,8 +1,8 @@
 use bevy::{
-    prelude::{Bundle, Commands, Component, Res, Transform, Vec2},
+    prelude::{Bundle, Commands, Component, Res, Transform, Vec2, Vec3},
     transform::TransformBundle,
 };
-use bevy_rapier2d::prelude::{Collider, CollisionGroups, Group, RigidBody};
+use bevy_rapier3d::prelude::{Collider, CollisionGroups, Group, RigidBody};
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
 
@@ -42,7 +42,7 @@ impl BundledActor<WallActorBundle> for VerticalWallDefault {
             wall_type: WallType::Left,
             rigid_body: RigidBody::Fixed,
             collider: Collider::polyline(
-                vec![Vec2::new(0.0, 0.0), Vec2::new(0.0, 0.0 + WALL_SIZE)],
+                vec![Vec3::ZERO, Vec3::new(0.0, 0.0 + WALL_SIZE, 0.0)],
                 None,
             ),
             collision_group: CollisionGroups::new(Group::GROUP_1, Group::ALL),
@@ -119,7 +119,7 @@ impl BundledActor<WallActorBundle> for HorizontalWallDefault {
             wall_type: WallType::Top,
             rigid_body: RigidBody::Fixed,
             collider: Collider::polyline(
-                vec![Vec2::new(0.0, 0.0), Vec2::new(0.0 + WALL_SIZE, 0.0)],
+                vec![Vec3::ZERO, Vec3::new(0.0 + WALL_SIZE, 0.0, 0.0)],
                 None,
             ),
             collision_group: CollisionGroups::new(Group::GROUP_1, Group::ALL),

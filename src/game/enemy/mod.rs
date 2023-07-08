@@ -23,7 +23,8 @@ mod systems;
 pub const NUMBER_OF_ENEMIES: usize = 4;
 pub const ENEMY_SPEED: f32 = 200.0;
 pub const ENEMY_SIZE: f32 = 64.0; // This is the enemy sprite size.
-pub const ENEMY_HEALTH_MIN: f32 = 4.0;
+pub const ENEMY_HEALTH_MIN: f32 = 15.0;
+pub const ENEMY_SPAWN_TIME: f32 = 5.0;
 
 pub struct EnemyPlugin;
 

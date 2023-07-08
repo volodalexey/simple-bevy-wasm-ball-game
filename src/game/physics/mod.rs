@@ -1,8 +1,11 @@
 use bevy::prelude::{
-    App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, OnUpdate, Plugin, Vec2,
+    App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, OnUpdate, Plugin, Vec3,
 };
 
-use bevy_rapier2d::prelude::{NoUserData, RapierConfiguration, RapierPhysicsPlugin};
+use bevy_rapier3d::{
+    prelude::{NoUserData, RapierConfiguration, RapierPhysicsPlugin},
+    render::RapierDebugRenderPlugin,
+};
 
 use crate::AppState;
 
@@ -15,9 +18,10 @@ pub struct PhysicsPlugin;
 
 impl Plugin for PhysicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        app.add_plugin(RapierPhysicsPlugin::<NoUserData>::default())
+            .add_plugin(RapierDebugRenderPlugin::default())
             .insert_resource(RapierConfiguration {
-                gravity: Vec2::ZERO,
+                gravity: Vec3::ZERO,
                 ..Default::default()
             })
             .add_system(spawn_level_walls.in_schedule(OnEnter(AppState::Game)))

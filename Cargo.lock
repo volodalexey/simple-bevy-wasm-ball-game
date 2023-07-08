@@ -652,16 +652,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c4b88451d4c5a353bff67dbaa937b6886efd26ae114769c17f2b35099c7a4de"
 
 [[package]]
-name = "bevy_rapier2d"
+name = "bevy_rapier3d"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "369c125de3d563a81174153af278dc2f761d0b10aed77eb9086dfa2e3ffa056b"
+checksum = "b4bce8074f19467fd55ab172ae6c11fca3ca28f66804590ab10c930bd5e9cd24"
 dependencies = [
  "bevy",
  "bitflags",
  "log",
  "nalgebra",
- "rapier2d",
+ "rapier3d",
 ]
 
 [[package]]
@@ -2518,10 +2518,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "parry2d"
+name = "parry3d"
 version = "0.13.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62cf99dd4c1e7e6425ecea8a4a0d8682dbf1861332d3e7803d576ed6fc64fa67"
+checksum = "2d527d9e8d203c55e5d25811d6c65e120b577985cb9b64f00fdb9aaf8c3d80ea"
 dependencies = [
  "approx",
  "arrayvec",
@@ -2647,10 +2647,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c8a99fddc9f0ba0a85884b8d14e3592853e787d581ca1816c91349b10e4eeab"
 
 [[package]]
-name = "rapier2d"
+name = "rapier3d"
 version = "0.17.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f94d294a9b96694c14888dd0e8ce77620dcc4f2f49264109ef835fa5e2285b84"
+checksum = "62a8a0bd9d3135f7b4eb45d0796540e7bab47b6b7c974f90567ccc5a0454f42b"
 dependencies = [
  "approx",
  "arrayvec",
@@ -2658,14 +2658,12 @@ dependencies = [
  "bitflags",
  "crossbeam",
  "downcast-rs",
- "instant",
  "nalgebra",
  "num-derive",
  "num-traits",
- "parry2d",
+ "parry3d",
  "rustc-hash",
  "simba",
- "vec_map",
 ]
 
 [[package]]
@@ -2891,7 +2889,7 @@ name = "simple-bevy-wasm-ball-game"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "bevy_rapier2d",
+ "bevy_rapier3d",
  "fastrand 2.0.0",
 ]
 

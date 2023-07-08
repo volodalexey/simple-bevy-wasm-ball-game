@@ -1,16 +1,17 @@
 use bevy::{
     prelude::{default, Bundle, Commands, Res, Transform, Vec2, Vec3},
     scene::SceneBundle,
+    time::{Timer, TimerMode},
 };
-use bevy_rapier2d::prelude::{
+use bevy_rapier3d::prelude::{
     Collider, CollisionGroups, Damping, ExternalImpulse, Group, RigidBody, Velocity,
 };
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
 
 use super::{
-    components::{Player, PlayerHealth},
-    PLAYER_SIZE,
+    components::{Player, PlayerCooldown, PlayerHealth},
+    PLAYER_COOLDOWN_TIME, PLAYER_SIZE,
 };
 
 #[derive(Bundle)]
@@ -24,6 +25,7 @@ pub struct PlayerActorBundle {
     pub collision_group: CollisionGroups,
     pub damping: Damping,
     pub health: PlayerHealth,
+    pub cooldown: PlayerCooldown,
 }
 
 pub struct PlayerBallDefault;
@@ -48,8 +50,8 @@ impl BundledActor<PlayerActorBundle> for PlayerBallDefault {
             },
             rigid_body: RigidBody::Dynamic,
             external_impulse: ExternalImpulse {
-                impulse: Vec2::ZERO,
-                torque_impulse: 0.0,
+                impulse: Vec3::ZERO,
+                torque_impulse: Vec3::ZERO,
             },
             velocity: Velocity::default(),
             collider: Collider::ball(PLAYER_SIZE / 2.0),
@@ -60,6 +62,10 @@ impl BundledActor<PlayerActorBundle> for PlayerBallDefault {
             },
             health: PlayerHealth {
                 value: PLAYER_SIZE / 2.0,
+            },
+            cooldown: PlayerCooldown {
+                timer: Timer::from_seconds(PLAYER_COOLDOWN_TIME, TimerMode::Repeating),
+                started: false,
             },
         };
     }

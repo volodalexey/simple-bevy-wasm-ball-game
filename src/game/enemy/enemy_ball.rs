@@ -1,11 +1,11 @@
 use std::time::Duration;
 
 use bevy::{
-    prelude::{default, Bundle, Commands, Res, Transform, Vec2},
+    prelude::{default, Bundle, Commands, Res, Transform, Vec2, Vec3},
     scene::SceneBundle,
     utils::Instant,
 };
-use bevy_rapier2d::prelude::{
+use bevy_rapier3d::prelude::{
     ActiveEvents, Collider, CollisionGroups, Group, Restitution, RigidBody, Velocity,
 };
 
@@ -37,7 +37,7 @@ impl BundledActor<EnemyActorBundle> for EnemyBallDefault {
         model_assets: &Res<ModelAssets>,
         spawn_position: Vec2,
     ) -> EnemyActorBundle {
-        let velocity = Vec2::new(fastrand::f32(), fastrand::f32()).normalize() * ENEMY_SPEED;
+        let velocity = Vec3::new(fastrand::f32(), fastrand::f32(), 0.0).normalize() * ENEMY_SPEED;
 
         return EnemyActorBundle {
             scene_bundle: SceneBundle {
@@ -56,7 +56,7 @@ impl BundledActor<EnemyActorBundle> for EnemyBallDefault {
             rigid_body: RigidBody::Dynamic,
             velocity: Velocity {
                 linvel: velocity,
-                angvel: 0.0,
+                angvel: Vec3::ZERO,
             },
             collider: Collider::ball(ENEMY_SIZE / 2.0),
             collision_group: CollisionGroups::new(
