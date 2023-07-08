@@ -2,6 +2,8 @@
 
 # [DEMO](https://volodalexey.github.io/simple-bevy-wasm-ball-game/)
 
+[![Gameplay video](./promo/poster.jpg)](./promo/gameplay.mp4)
+
 Originally created by [frederickjjoubert](https://github.com/frederickjjoubert) as [Ball Game](https://github.com/frederickjjoubert/learn-bevy) in following video playlist [Learn Bevy Engine 0.10 Beginner Tutorial Series](https://www.youtube.com/watch?v=TQt-v_bFdao&list=PLVnntJRoP85JHGX7rGDu6LaF3fmDDbqyd&pp=iAQB).
 
 Refactored to use WASM with touch/mouse support
