@@ -9,7 +9,7 @@ use self::systems::{
     interactions::{player_collide, tick_player_cooldown_timer},
     // interactions::{enemy_hit_player, player_hit_star},
     lifecycles::{despawn_player, init_player_animation, spawn_player},
-    movement::player_movement,
+    movement::{confine_player_movement, player_movement},
 };
 
 use super::SimulationState;
@@ -37,7 +37,12 @@ impl Plugin for PlayerPlugin {
             // Systems
             .add_system(init_player_animation.in_set(OnUpdate(AppState::Game)))
             .add_systems(
-                (player_movement, tick_player_cooldown_timer, player_collide)
+                (
+                    player_movement,
+                    tick_player_cooldown_timer,
+                    player_collide,
+                    confine_player_movement,
+                )
                     .in_set(OnUpdate(AppState::Game))
                     .in_set(OnUpdate(SimulationState::Running)),
             )

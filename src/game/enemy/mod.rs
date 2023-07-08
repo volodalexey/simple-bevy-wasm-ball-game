@@ -8,8 +8,8 @@ use crate::AppState;
 use self::{
     resources::EnemySpawnTimer,
     systems::{
-        despawn_enemies, enemy_collide, init_enemy_animation, spawn_enemies,
-        spawn_enemies_over_time, tick_enemy_spawn_timer,
+        confine_enemy_movement, despawn_enemies, enemy_collide, init_enemy_animation,
+        spawn_enemies, spawn_enemies_over_time, tick_enemy_spawn_timer,
     },
 };
 
@@ -42,6 +42,7 @@ impl Plugin for EnemyPlugin {
                     tick_enemy_spawn_timer,
                     spawn_enemies_over_time,
                     enemy_collide,
+                    confine_enemy_movement,
                 )
                     .in_set(OnUpdate(AppState::Game))
                     .in_set(OnUpdate(SimulationState::Running)),

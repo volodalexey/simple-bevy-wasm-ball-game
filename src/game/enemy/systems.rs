@@ -1,7 +1,7 @@
 use bevy::{
     prelude::{
         AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventReader, EventWriter,
-        Query, Res, ResMut, Vec2, With, Without,
+        Query, Res, ResMut, Transform, Vec2, With, Without,
     },
     time::Time,
     window::{PrimaryWindow, Window},
@@ -20,7 +20,7 @@ use super::{
     components::{Enemy, EnemyAnimator},
     enemy_ball::EnemyBallDefault,
     resources::EnemySpawnTimer,
-    NUMBER_OF_ENEMIES,
+    ENEMY_SIZE, NUMBER_OF_ENEMIES,
 };
 
 pub fn spawn_enemies(
@@ -148,5 +148,38 @@ pub fn spawn_enemies_over_time(
         let spawn_position = Vec2::new(random_x, random_y);
 
         EnemyBallDefault::spawn_bundle(&mut commands, &audio_clips, &model_assets, spawn_position);
+    }
+}
+
+pub fn confine_enemy_movement(
+    mut enemy_query: Query<&mut Transform, With<Enemy>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    for mut enemy_transform in enemy_query.iter_mut() {
+        let mut translation = enemy_transform.translation;
+
+        let size = ENEMY_SIZE * enemy_transform.scale.x;
+
+        let left = -size;
+        let right = window.width() + size;
+        let top = -size;
+        let bottom = window.height() + size;
+
+        // Bound the enemy x position
+        if translation.x < left {
+            translation.x = left + size * 2.0;
+        } else if translation.x > right {
+            translation.x = right - size * 2.0;
+        }
+        // Bound the enemy y position
+        if translation.y < top {
+            translation.y = top + size * 2.0;
+        } else if translation.y > bottom {
+            translation.y = bottom - size * 2.0;
+        }
+
+        enemy_transform.translation = translation;
     }
 }

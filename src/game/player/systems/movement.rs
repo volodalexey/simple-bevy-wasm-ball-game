@@ -5,7 +5,7 @@ use bevy::window::{PrimaryWindow, Window};
 use bevy_rapier3d::prelude::{ExternalImpulse, Velocity};
 
 use crate::game::player::components::Player;
-use crate::game::player::{PLAYER_FORCE, PLAYER_SPEED};
+use crate::game::player::{PLAYER_FORCE, PLAYER_SIZE, PLAYER_SPEED};
 
 pub enum EScanCode {
     W = 17,
@@ -86,5 +86,38 @@ pub fn player_movement(
         player_velocity.linvel = player_velocity
             .linvel
             .clamp_length_max(PLAYER_SPEED * player_transform.scale.x);
+    }
+}
+
+pub fn confine_player_movement(
+    mut player_query: Query<&mut Transform, With<Player>>,
+    window_query: Query<&Window, With<PrimaryWindow>>,
+) {
+    let window = window_query.get_single().unwrap();
+
+    if let Ok(mut player_transform) = player_query.get_single_mut() {
+        let mut translation = player_transform.translation;
+
+        let size = PLAYER_SIZE * player_transform.scale.x;
+
+        let left = -size;
+        let right = window.width() + size;
+        let top = -size;
+        let bottom = window.height() + size;
+
+        // Bound the player x position
+        if translation.x < left {
+            translation.x = left + size * 2.0;
+        } else if translation.x > right {
+            translation.x = right - size * 2.0;
+        }
+        // Bound the players y position.
+        if translation.y < top {
+            translation.y = top + size * 2.0;
+        } else if translation.y > bottom {
+            translation.y = bottom - size * 2.0;
+        }
+
+        player_transform.translation = translation;
     }
 }
