@@ -1,5 +1,5 @@
 use bevy::{
-    prelude::{Bundle, Commands, Component, Res, Transform, Vec2, Vec3},
+    prelude::{Bundle, Commands, Component, Res, Transform, Vec2},
     transform::TransformBundle,
 };
 use bevy_rapier3d::prelude::{Collider, CollisionGroups, Group, RigidBody};
@@ -41,10 +41,7 @@ impl BundledActor<WallActorBundle> for VerticalWallDefault {
             )),
             wall_type: WallType::Left,
             rigid_body: RigidBody::Fixed,
-            collider: Collider::polyline(
-                vec![Vec3::ZERO, Vec3::new(0.0, 0.0 + WALL_SIZE, 0.0)],
-                None,
-            ),
+            collider: Collider::cuboid(1.0, WALL_SIZE, WALL_SIZE),
             collision_group: CollisionGroups::new(Group::GROUP_1, Group::ALL),
         };
     }
@@ -118,10 +115,7 @@ impl BundledActor<WallActorBundle> for HorizontalWallDefault {
             )),
             wall_type: WallType::Top,
             rigid_body: RigidBody::Fixed,
-            collider: Collider::polyline(
-                vec![Vec3::ZERO, Vec3::new(0.0 + WALL_SIZE, 0.0, 0.0)],
-                None,
-            ),
+            collider: Collider::cuboid(WALL_SIZE, 1.0, WALL_SIZE),
             collision_group: CollisionGroups::new(Group::GROUP_1, Group::ALL),
         };
     }

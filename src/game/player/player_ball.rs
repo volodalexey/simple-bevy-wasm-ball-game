@@ -4,7 +4,7 @@ use bevy::{
     time::{Timer, TimerMode},
 };
 use bevy_rapier3d::prelude::{
-    Collider, CollisionGroups, Damping, ExternalImpulse, Group, RigidBody, Velocity,
+    Collider, CollisionGroups, Damping, ExternalImpulse, Group, LockedAxes, RigidBody, Velocity,
 };
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
@@ -23,6 +23,7 @@ pub struct PlayerActorBundle {
     pub velocity: Velocity,
     pub collider: Collider,
     pub collision_group: CollisionGroups,
+    pub locked_axes: LockedAxes,
     pub damping: Damping,
     pub health: PlayerHealth,
     pub cooldown: PlayerCooldown,
@@ -56,6 +57,7 @@ impl BundledActor<PlayerActorBundle> for PlayerBallDefault {
             velocity: Velocity::default(),
             collider: Collider::ball(PLAYER_SIZE / 2.0),
             collision_group: CollisionGroups::new(Group::GROUP_2, Group::ALL),
+            locked_axes: LockedAxes::TRANSLATION_LOCKED_Z,
             damping: Damping {
                 linear_damping: 0.8,
                 angular_damping: 0.3,

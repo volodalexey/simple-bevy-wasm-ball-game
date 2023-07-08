@@ -6,7 +6,7 @@ use bevy::{
     utils::Instant,
 };
 use bevy_rapier3d::prelude::{
-    ActiveEvents, Collider, CollisionGroups, Group, Restitution, RigidBody, Velocity,
+    ActiveEvents, Collider, CollisionGroups, Group, LockedAxes, Restitution, RigidBody, Velocity,
 };
 
 use crate::game::{actor::BundledActor, audio::AudioClipAssets, models::ModelAssets};
@@ -24,6 +24,7 @@ pub struct EnemyActorBundle {
     pub velocity: Velocity,
     pub collider: Collider,
     pub collision_group: CollisionGroups,
+    pub locked_axes: LockedAxes,
     pub restitution: Restitution,
     pub collision_events: ActiveEvents,
     pub health: EnemyHealth,
@@ -63,6 +64,7 @@ impl BundledActor<EnemyActorBundle> for EnemyBallDefault {
                 Group::GROUP_3,
                 Group::GROUP_1 | Group::GROUP_2 | Group::GROUP_3,
             ),
+            locked_axes: LockedAxes::TRANSLATION_LOCKED_Z,
             restitution: Restitution::coefficient(1.0),
             collision_events: ActiveEvents::COLLISION_EVENTS,
             health: EnemyHealth {
