@@ -39,19 +39,11 @@ rustup target install wasm32-unknown-unknown
 ```sh
 cargo install wasm-bindgen-cli
 ```
-Additionally for optimization wasm bundle size you can install [wasm-opt](https://github.com/brson/wasm-opt-rs) tool
-```sh
-cargo install wasm-opt
-```
 
 ### Run build script
 
 ```sh
-./utils/wasm/build.sh
-```
-Or build and optimize
-```sh
-./utils/wasm/optimize.sh
+./wasm/build.sh
 ```
 
 ## WASM build history
@@ -83,3 +75,7 @@ Or build and optimize
 ### Use optimizations for modules
 - 26990021    simple-bevy-wasm-ball-game_bg.wasm
 - 88108       simple-bevy-wasm-ball-game.js
+
+### Use optimizations (codegen-units = 1, opt-level = 'z', lto = true)
+- 13672132    simple-bevy-wasm-ball-game_bg.wasm
+- 87175       simple-bevy-wasm-ball-game.js

@@ -36,4 +36,5 @@ fn on_audio_event(audio: Res<Audio>, mut audio_events: EventReader<AudioEvent>) 
     for event in audio_events.iter() {
         audio.play(event.clip.clone_weak());
     }
+    audio_events.clear();
 }
