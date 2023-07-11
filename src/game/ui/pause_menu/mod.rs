@@ -2,9 +2,7 @@ mod components;
 mod styles;
 mod systems;
 
-use bevy::prelude::{
-    App, IntoSystemAppConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate, Plugin,
-};
+use bevy::prelude::{in_state, App, IntoSystemConfigs, OnEnter, OnExit, Plugin, Update};
 
 use crate::{game::SimulationState, AppState};
 
@@ -21,11 +19,9 @@ pub struct PauseMenuPlugin;
 
 impl Plugin for PauseMenuPlugin {
     fn build(&self, app: &mut App) {
-        app
-            // OnEnter Systems
-            .add_system(spawn_pause_menu.in_schedule(OnEnter(AppState::Game)))
-            // Systems
+        app.add_systems(OnEnter(AppState::Game), spawn_pause_menu)
             .add_systems(
+                Update,
                 (
                     interact_with_resume_button,
                     interact_with_main_menu_button,
@@ -33,9 +29,8 @@ impl Plugin for PauseMenuPlugin {
                     #[allow(dead_code)]
                     interact_with_quit_button,
                 )
-                    .in_set(OnUpdate(SimulationState::Paused)),
+                    .run_if(in_state(SimulationState::Paused)),
             )
-            // OnExit Systems
-            .add_system(despawn_pause_menu.in_schedule(OnExit(SimulationState::Paused)));
+            .add_systems(OnExit(SimulationState::Paused), despawn_pause_menu);
     }
 }

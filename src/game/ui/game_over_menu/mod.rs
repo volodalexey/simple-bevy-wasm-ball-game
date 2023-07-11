@@ -3,8 +3,7 @@ mod styles;
 mod systems;
 
 use bevy::prelude::{
-    apply_system_buffers, App, IntoSystemAppConfig, IntoSystemAppConfigs, IntoSystemConfigs,
-    OnEnter, OnExit, OnUpdate, Plugin,
+    apply_deferred, in_state, App, IntoSystemConfigs, OnEnter, OnExit, Plugin, Update,
 };
 
 use crate::AppState;
@@ -23,28 +22,26 @@ pub struct GameOverMenuPlugin;
 
 impl Plugin for GameOverMenuPlugin {
     fn build(&self, app: &mut App) {
-        app
-            // OnEnter State Systems
-            .add_systems(
-                (
-                    spawn_game_over_menu,
-                    apply_system_buffers,
-                    update_final_score_text,
-                )
-                    .chain()
-                    .in_schedule(OnEnter(AppState::GameOver)),
+        app.add_systems(
+            OnEnter(AppState::GameOver),
+            (
+                spawn_game_over_menu,
+                apply_deferred,
+                update_final_score_text,
             )
-            .add_systems(
-                (
-                    interact_with_restart_button,
-                    interact_with_main_menu_button,
-                    #[cfg(not(target_arch = "wasm32"))]
-                    #[allow(dead_code)]
-                    interact_with_quit_button,
-                )
-                    .in_set(OnUpdate(AppState::GameOver)),
+                .chain(),
+        )
+        .add_systems(
+            Update,
+            (
+                interact_with_restart_button,
+                interact_with_main_menu_button,
+                #[cfg(not(target_arch = "wasm32"))]
+                #[allow(dead_code)]
+                interact_with_quit_button,
             )
-            // // OnExit State Systems
-            .add_system(despawn_game_over_menu.in_schedule(OnExit(AppState::GameOver)));
+                .run_if(in_state(AppState::GameOver)),
+        )
+        .add_systems(OnExit(AppState::GameOver), despawn_game_over_menu);
     }
 }

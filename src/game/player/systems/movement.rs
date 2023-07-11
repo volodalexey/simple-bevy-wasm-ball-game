@@ -33,17 +33,19 @@ pub fn player_movement(
         if let Ok(window) = window_query.get_single() {
             if mouse_button_input.pressed(MouseButton::Left) {
                 if let Some(cursor_position) = window.cursor_position() {
-                    let diff_x = cursor_position.x - player_transform.translation.x;
-                    let diff_y = cursor_position.y - player_transform.translation.y;
+                    let pointer_position =
+                        Vec2::new(cursor_position.x, window.height() - cursor_position.y); // tranform y coordinate to be the same as mouse coordinates
+                    let diff_x = pointer_position.x - player_transform.translation.x;
+                    let diff_y = pointer_position.y - player_transform.translation.y;
                     let normilized_diff = Vec3::new(diff_x, diff_y, 0.0).normalize_or_zero();
                     direction += normilized_diff;
                 }
             }
             if let Some(touch_position) = touches.first_pressed_position() {
-                let touch_position =
+                let pointer_position =
                     Vec2::new(touch_position.x, window.height() - touch_position.y); // tranform y coordinate to be the same as mouse coordinates
-                let diff_x = touch_position.x - player_transform.translation.x;
-                let diff_y = touch_position.y - player_transform.translation.y;
+                let diff_x = pointer_position.x - player_transform.translation.x;
+                let diff_y = pointer_position.y - player_transform.translation.y;
                 let normilized_diff = Vec3::new(diff_x, diff_y, 0.0).normalize_or_zero();
                 direction += normilized_diff;
             }

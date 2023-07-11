@@ -10,7 +10,7 @@ use bevy::{
 
 use crate::game::ui::hud::{
     components::{EnemyText, ScoreText, HUD},
-    styles::{get_text_style, BACKGROUND_COLOR, HUD_STYLE, IMAGE_STYLE, LHS_STYLE, RHS_STYLE},
+    styles::{get_text_style, hud_style, image_style, lhs_style, rhs_style, BACKGROUND_COLOR},
 };
 
 pub fn spawn_hud(mut commands: Commands, asset_server: Res<AssetServer>) {
@@ -21,7 +21,7 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
     let hud_entity = commands
         .spawn((
             NodeBundle {
-                style: HUD_STYLE,
+                style: hud_style(),
                 ..default()
             },
             HUD {},
@@ -30,14 +30,14 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
             // LHS
             parent
                 .spawn(NodeBundle {
-                    style: LHS_STYLE,
+                    style: lhs_style(),
                     background_color: BACKGROUND_COLOR.into(),
                     ..default()
                 })
                 .with_children(|parent| {
                     // Star Image
                     parent.spawn(ImageBundle {
-                        style: IMAGE_STYLE,
+                        style: image_style(),
                         image: asset_server.load("sprites/star.png").into(),
                         ..default()
                     });
@@ -61,7 +61,7 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
             // RHS
             parent
                 .spawn(NodeBundle {
-                    style: RHS_STYLE,
+                    style: rhs_style(),
                     background_color: BACKGROUND_COLOR.into(),
                     ..default()
                 })
@@ -84,7 +84,7 @@ pub fn build_hud(commands: &mut Commands, asset_server: &Res<AssetServer>) -> En
                     ));
                     // Enemy Image
                     parent.spawn(ImageBundle {
-                        style: IMAGE_STYLE,
+                        style: image_style(),
                         image: asset_server.load("sprites/ball_red_large.png").into(),
                         ..default()
                     });

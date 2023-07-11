@@ -1,7 +1,4 @@
-use bevy::prelude::{AudioSource, Handle};
+use bevy::prelude::Event;
 
+#[derive(Event)]
 pub struct GameOverEvent {}
-
-pub struct AudioEvent {
-    pub clip: Handle<AudioSource>,
-}

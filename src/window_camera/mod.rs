@@ -2,7 +2,7 @@ mod components;
 mod systems;
 
 use bevy::{
-    prelude::{default, App, Plugin, PluginGroup},
+    prelude::{default, App, FixedUpdate, Plugin, PluginGroup, Startup},
     window::{Window, WindowPlugin},
     DefaultPlugins,
 };
@@ -26,7 +26,7 @@ impl Plugin for WindowCameraPlugin {
             }),
             ..default()
         }))
-        .add_startup_system(spawn_camera)
-        .add_system(on_resize_window);
+        .add_systems(Startup, spawn_camera)
+        .add_systems(FixedUpdate, on_resize_window);
     }
 }

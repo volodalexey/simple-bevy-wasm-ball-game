@@ -4,7 +4,7 @@ mod main_menu;
 mod systems;
 mod window_camera;
 
-use bevy::prelude::{App, States};
+use bevy::prelude::{App, FixedUpdate, Startup, States};
 use game::GamePlugin;
 use main_menu::MainMenuPlugin;
 use systems::{
@@ -15,19 +15,18 @@ use window_camera::WindowCameraPlugin;
 
 fn main() {
     App::new()
-        // Bevy Plugins
-        .add_plugin(WindowCameraPlugin)
+        .add_plugins((WindowCameraPlugin, MainMenuPlugin, GamePlugin))
         .add_state::<AppState>()
-        // My Plugins
-        .add_plugin(MainMenuPlugin)
-        .add_plugin(GamePlugin)
-        // Startup Systems
-        .add_startup_system(spawn_lights)
-        // Systems
-        .add_system(transition_to_game_state)
-        .add_system(transition_to_main_menu_state)
-        .add_system(exit_game)
-        .add_system(handle_game_over)
+        .add_systems(Startup, spawn_lights)
+        .add_systems(
+            FixedUpdate,
+            (
+                transition_to_game_state,
+                transition_to_main_menu_state,
+                exit_game,
+                handle_game_over,
+            ),
+        )
         .run();
 }
 

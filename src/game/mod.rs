@@ -10,9 +10,7 @@ mod systems;
 mod ui;
 mod utils;
 
-use bevy::prelude::{
-    in_state, App, IntoSystemAppConfig, IntoSystemConfig, OnEnter, OnExit, Plugin, States,
-};
+use bevy::prelude::{in_state, App, IntoSystemConfigs, OnEnter, OnExit, Plugin, States, Update};
 use enemy::EnemyPlugin;
 use player::PlayerPlugin;
 use score::ScorePlugin;
@@ -32,26 +30,21 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app
-            // Events
-            .add_event::<GameOverEvent>()
-            // States
+        app.add_event::<GameOverEvent>()
             .add_state::<SimulationState>()
-            // OnEnter Systems
-            .add_system(pause_simulation.in_schedule(OnEnter(AppState::Game)))
-            // My Plugins
-            .add_plugin(PhysicsPlugin)
-            .add_plugin(ModelsPlugin)
-            .add_plugin(GameAudioPlugin)
-            .add_plugin(EnemyPlugin)
-            .add_plugin(PlayerPlugin)
-            .add_plugin(ScorePlugin)
-            .add_plugin(StarPlugin)
-            .add_plugin(GameUIPlugin)
-            // Systems
-            .add_system(toggle_simulation.run_if(in_state(AppState::Game)))
-            // Exit State Systems
-            .add_system(resume_simulation.in_schedule(OnExit(AppState::Game)));
+            .add_systems(OnEnter(AppState::Game), pause_simulation)
+            .add_plugins((
+                PhysicsPlugin,
+                ModelsPlugin,
+                GameAudioPlugin,
+                EnemyPlugin,
+                PlayerPlugin,
+                ScorePlugin,
+                StarPlugin,
+                GameUIPlugin,
+            ))
+            .add_systems(Update, toggle_simulation.run_if(in_state(AppState::Game)))
+            .add_systems(OnExit(AppState::Game), resume_simulation);
     }
 }
 

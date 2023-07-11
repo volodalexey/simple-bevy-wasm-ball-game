@@ -15,8 +15,8 @@ use crate::game::ui::pause_menu::components::QuitButton;
 use crate::game::ui::pause_menu::{
     components::{MainMenuButton, PauseMenu, ResumeButton},
     styles::{
-        get_button_text_style, get_title_text_style, BACKGROUND_COLOR, BUTTON_STYLE, NORMAL_BUTTON,
-        PAUSE_MENU_CONTAINER_STYLE, PAUSE_MENU_STYLE,
+        button_style, get_button_text_style, get_title_text_style, pause_menu_container_style,
+        pause_menu_style, BACKGROUND_COLOR, NORMAL_BUTTON,
     },
 };
 
@@ -38,7 +38,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
     let pause_menu_entity = commands
         .spawn((
             NodeBundle {
-                style: PAUSE_MENU_STYLE,
+                style: pause_menu_style(),
                 z_index: ZIndex::Local(1), // See Ref. 1
                 ..default()
             },
@@ -47,7 +47,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
-                    style: PAUSE_MENU_CONTAINER_STYLE,
+                    style: pause_menu_container_style(),
                     background_color: BACKGROUND_COLOR.into(),
                     ..default()
                 })
@@ -68,7 +68,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: BUTTON_STYLE,
+                                style: button_style(),
                                 background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
@@ -92,7 +92,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: BUTTON_STYLE,
+                                style: button_style(),
                                 background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
@@ -117,7 +117,7 @@ pub fn build_pause_menu(commands: &mut Commands, asset_server: &Res<AssetServer>
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: BUTTON_STYLE,
+                                style: button_style(),
                                 background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },

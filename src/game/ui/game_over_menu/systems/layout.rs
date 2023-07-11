@@ -14,8 +14,8 @@ use crate::game::ui::game_over_menu::components::QuitButton;
 use crate::game::ui::game_over_menu::{
     components::{FinalScoreText, GameOverMenu, MainMenuButton, RestartButton},
     styles::{
-        get_button_text_style, get_final_score_text_style, get_title_text_style, BACKGROUND_COLOR,
-        BUTTON_STYLE, GAME_OVER_MENU_CONTAINER_STYLE, GAME_OVER_MENU_STYLE, NORMAL_BUTTON,
+        button_style, game_over_menu_container_style, game_over_menu_style, get_button_text_style,
+        get_final_score_text_style, get_title_text_style, BACKGROUND_COLOR, NORMAL_BUTTON,
     },
 };
 
@@ -27,7 +27,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
     let game_over_menu_entity = commands
         .spawn((
             NodeBundle {
-                style: GAME_OVER_MENU_STYLE,
+                style: game_over_menu_style(),
                 z_index: ZIndex::Local(2), // See Ref. 1
                 ..default()
             },
@@ -36,7 +36,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
         .with_children(|parent| {
             parent
                 .spawn(NodeBundle {
-                    style: GAME_OVER_MENU_CONTAINER_STYLE,
+                    style: game_over_menu_container_style(),
                     background_color: BACKGROUND_COLOR.into(),
                     ..default()
                 })
@@ -72,7 +72,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: BUTTON_STYLE,
+                                style: button_style(),
                                 background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
@@ -96,7 +96,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: BUTTON_STYLE,
+                                style: button_style(),
                                 background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },
@@ -121,7 +121,7 @@ pub fn build_game_over_menu(commands: &mut Commands, asset_server: &Res<AssetSer
                     parent
                         .spawn((
                             ButtonBundle {
-                                style: BUTTON_STYLE,
+                                style: button_style(),
                                 background_color: NORMAL_BUTTON.into(),
                                 ..default()
                             },

@@ -1,7 +1,4 @@
-use bevy::prelude::{
-    App, IntoSystemAppConfig, IntoSystemConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate,
-    Plugin,
-};
+use bevy::prelude::{in_state, App, Condition, IntoSystemConfigs, OnEnter, OnExit, Plugin, Update};
 
 use crate::AppState;
 
@@ -34,20 +31,23 @@ impl Plugin for EnemyPlugin {
             // Resources
             .init_resource::<EnemySpawnTimer>()
             // Enter State Systems
-            .add_system(spawn_enemies.in_schedule(OnEnter(AppState::Game)))
+            .add_systems(OnEnter(AppState::Game), spawn_enemies)
             // Systems
-            .add_system(init_enemy_animation.in_set(OnUpdate(AppState::Game)))
             .add_systems(
+                Update,
+                init_enemy_animation.run_if(in_state(AppState::Game)),
+            )
+            .add_systems(
+                Update,
                 (
                     tick_enemy_spawn_timer,
                     spawn_enemies_over_time,
                     enemy_collide,
                     confine_enemy_movement,
                 )
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
+                    .run_if(in_state(AppState::Game).and_then(in_state(SimulationState::Running))),
             )
             // Exit State Systems
-            .add_system(despawn_enemies.in_schedule(OnExit(AppState::Game)));
+            .add_systems(OnExit(AppState::Game), despawn_enemies);
     }
 }

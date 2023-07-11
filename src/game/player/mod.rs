@@ -1,7 +1,4 @@
-use bevy::prelude::{
-    App, IntoSystemAppConfig, IntoSystemConfig, IntoSystemConfigs, OnEnter, OnExit, OnUpdate,
-    Plugin,
-};
+use bevy::prelude::{in_state, App, Condition, IntoSystemConfigs, OnEnter, OnExit, Plugin, Update};
 
 use crate::AppState;
 
@@ -33,20 +30,23 @@ impl Plugin for PlayerPlugin {
         app
             // Configure System Sets
             // On Enter State
-            .add_system(spawn_player.in_schedule(OnEnter(AppState::Game)))
+            .add_systems(OnEnter(AppState::Game), spawn_player)
             // Systems
-            .add_system(init_player_animation.in_set(OnUpdate(AppState::Game)))
             .add_systems(
+                Update,
+                init_player_animation.run_if(in_state(AppState::Game)),
+            )
+            .add_systems(
+                Update,
                 (
                     player_movement,
                     tick_player_cooldown_timer,
                     player_collide,
                     confine_player_movement,
                 )
-                    .in_set(OnUpdate(AppState::Game))
-                    .in_set(OnUpdate(SimulationState::Running)),
+                    .run_if(in_state(AppState::Game).and_then(in_state(SimulationState::Running))),
             )
             // On Exit State
-            .add_system(despawn_player.in_schedule(OnExit(AppState::Game)));
+            .add_systems(OnExit(AppState::Game), despawn_player);
     }
 }

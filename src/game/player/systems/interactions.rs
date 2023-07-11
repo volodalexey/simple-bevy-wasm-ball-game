@@ -1,11 +1,11 @@
 use bevy::prelude::{
-    Commands, DespawnRecursiveExt, Entity, EventReader, EventWriter, Mut, Query, Res, ResMut,
-    Transform, Vec3, With, Without,
+    default, AudioBundle, Commands, DespawnRecursiveExt, Entity, EventReader, EventWriter, Mut,
+    PlaybackSettings, Query, Res, ResMut, Transform, Vec3, With, Without,
 };
 use bevy::time::Time;
 use bevy_rapier3d::prelude::CollisionEvent;
 
-use crate::events::{AudioEvent, GameOverEvent};
+use crate::events::GameOverEvent;
 use crate::game::enemy::components::{Enemy, EnemyHealth};
 use crate::game::enemy::{ENEMY_HEALTH_MIN, ENEMY_SIZE};
 use crate::game::player::components::{Player, PlayerCooldown, PlayerHealth};
@@ -45,7 +45,6 @@ pub fn player_collide(
         (With<Enemy>, Without<Player>),
     >,
     mut score: ResMut<Score>,
-    mut audio_event: EventWriter<AudioEvent>,
     mut collision_reader: EventReader<CollisionEvent>,
     mut game_over_event_writer: EventWriter<GameOverEvent>,
 ) {
@@ -121,17 +120,26 @@ pub fn player_collide(
                         enemy_transform.scale =
                             Vec3::splat(enemy_health.value / (ENEMY_SIZE / 2.0));
                         if player_health.value <= PLAYER_HEALTH_MIN {
-                            let clip = player.explosion_audio_clip.clone_weak();
-                            audio_event.send(AudioEvent { clip });
+                            commands.spawn(AudioBundle {
+                                source: player.explosion_audio_clip.clone(),
+                                settings: PlaybackSettings::DESPAWN,
+                                ..default()
+                            });
                             commands.entity(player_entity).despawn_recursive();
                             game_over_event_writer.send(GameOverEvent {});
                         } else {
-                            let clip = player.shrink_audio_clip.clone_weak();
-                            audio_event.send(AudioEvent { clip });
+                            commands.spawn(AudioBundle {
+                                source: player.shrink_audio_clip.clone(),
+                                settings: PlaybackSettings::DESPAWN,
+                                ..default()
+                            });
                         }
                         if enemy_health.value <= ENEMY_HEALTH_MIN {
-                            let clip = player.explosion_audio_clip.clone_weak();
-                            audio_event.send(AudioEvent { clip });
+                            commands.spawn(AudioBundle {
+                                source: player.explosion_audio_clip.clone(),
+                                settings: PlaybackSettings::DESPAWN,
+                                ..default()
+                            });
                             commands.entity(enemy_entity).despawn_recursive();
                         }
                     }
@@ -153,8 +161,11 @@ pub fn player_collide(
                         player_transform.scale =
                             Vec3::splat(player_health.value / (PLAYER_SIZE / 2.0));
                     }
-                    let clip = star.collect_audio_clip.clone_weak();
-                    audio_event.send(AudioEvent { clip });
+                    commands.spawn(AudioBundle {
+                        source: star.collect_audio_clip.clone(),
+                        settings: PlaybackSettings::DESPAWN,
+                        ..default()
+                    });
                     commands.entity(star_entity).despawn_recursive();
                 }
             }

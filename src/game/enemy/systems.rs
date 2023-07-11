@@ -1,19 +1,16 @@
 use bevy::{
     prelude::{
-        AnimationPlayer, Children, Commands, DespawnRecursiveExt, Entity, EventReader, EventWriter,
-        Query, Res, ResMut, Transform, Vec2, With, Without,
+        default, AnimationPlayer, AudioBundle, Children, Commands, DespawnRecursiveExt, Entity,
+        EventReader, PlaybackSettings, Query, Res, ResMut, Transform, Vec2, With, Without,
     },
     time::Time,
     window::{PrimaryWindow, Window},
 };
 use bevy_rapier3d::prelude::CollisionEvent;
 
-use crate::{
-    events::AudioEvent,
-    game::{
-        actor::BundledActor, audio::AudioClipAssets, models::ModelAssets,
-        physics::components::WallType, player::PLAYER_SIZE, utils::find_animation_player,
-    },
+use crate::game::{
+    actor::BundledActor, audio::AudioClipAssets, models::ModelAssets,
+    physics::components::WallType, player::PLAYER_SIZE, utils::find_animation_player,
 };
 
 use super::{
@@ -88,8 +85,8 @@ pub fn despawn_enemies(mut commands: Commands, enemy_query: Query<Entity, With<E
 }
 
 pub fn enemy_collide(
+    mut commands: Commands,
     enemy_query: Query<(Entity, &Enemy), With<Enemy>>,
-    mut audio_event: EventWriter<AudioEvent>,
     wall_query: Query<&WallType, With<WallType>>,
     mut collision_reader: EventReader<CollisionEvent>,
 ) {
@@ -113,15 +110,25 @@ pub fn enemy_collide(
             if let Some(enemy) = some_enemy {
                 if let Some(_) = some_wall {
                     // Randomly play one of the two sound effects.
-                    let clip = if fastrand::f32() > 0.5 {
-                        enemy.bounce_audio_clip_1.clone_weak()
+                    if fastrand::f32() > 0.5 {
+                        commands.spawn(AudioBundle {
+                            source: enemy.bounce_audio_clip_1.clone(),
+                            settings: PlaybackSettings::DESPAWN,
+                            ..default()
+                        });
                     } else {
-                        enemy.bounce_audio_clip_2.clone_weak()
+                        commands.spawn(AudioBundle {
+                            source: enemy.bounce_audio_clip_2.clone(),
+                            settings: PlaybackSettings::DESPAWN,
+                            ..default()
+                        });
                     };
-                    audio_event.send(AudioEvent { clip });
                 } else {
-                    let clip = enemy.hit_audio_clip_1.clone_weak();
-                    audio_event.send(AudioEvent { clip });
+                    commands.spawn(AudioBundle {
+                        source: enemy.hit_audio_clip_1.clone(),
+                        settings: PlaybackSettings::DESPAWN,
+                        ..default()
+                    });
                 }
             }
         }

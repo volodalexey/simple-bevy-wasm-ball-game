@@ -1,4 +1,4 @@
-use bevy::prelude::{App, IntoSystemAppConfig, IntoSystemAppConfigs, OnEnter, OnExit, Plugin};
+use bevy::prelude::{App, OnEnter, OnExit, Plugin};
 
 use crate::AppState;
 
@@ -18,8 +18,8 @@ impl Plugin for ScorePlugin {
             // Resources
             .init_resource::<HighScores>()
             // On Enter State
-            .add_system(insert_score.in_schedule(OnEnter(AppState::Game)))
+            .add_systems(OnEnter(AppState::Game), insert_score)
             // On Exit State
-            .add_systems((remove_score, update_high_scores).in_schedule(OnExit(AppState::Game)));
+            .add_systems(OnExit(AppState::Game), (remove_score, update_high_scores));
     }
 }
