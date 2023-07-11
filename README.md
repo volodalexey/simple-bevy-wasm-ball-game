@@ -64,10 +64,6 @@ cargo install wasm-bindgen-cli
 - 24682460    simple-bevy-wasm-ball-game_bg.wasm
 - 88108       simple-bevy-wasm-ball-game.js
 
-### Use Optimization (audio initialization do not work)
-- 14901228    simple-bevy-wasm-ball-game_bg.wasm
-- 88108       simple-bevy-wasm-ball-game.js
-
 ### Use Rapier physics engine
 - 26932957    simple-bevy-wasm-ball-game_bg.wasm
 - 88108       simple-bevy-wasm-ball-game.js
@@ -79,3 +75,7 @@ cargo install wasm-bindgen-cli
 ### Use optimizations (codegen-units = 1, opt-level = 'z', lto = true)
 - 13672132    simple-bevy-wasm-ball-game_bg.wasm
 - 87175       simple-bevy-wasm-ball-game.js
+
+### Migrated to bevy 0.11 and use bevy_ui_styled
+- 15840612    simple-bevy-wasm-ball-game_bg.wasm
+- 87420       simple-bevy-wasm-ball-game.js
