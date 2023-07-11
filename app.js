@@ -1,4 +1,4 @@
-import init from './simple-bevy-wasm-ball-game.js'
+import init from './wasm_bindgen_core.js'
 
 async function run() {
     await init().catch(err => {
