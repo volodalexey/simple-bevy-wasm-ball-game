@@ -3,8 +3,7 @@ mod resources;
 use bevy::{
     gltf::Gltf,
     prelude::{
-        resource_added, App, AssetServer, Assets, Commands, Handle, IntoSystemConfigs, Local,
-        Plugin, PostUpdate, Res, Startup,
+        App, AssetServer, Assets, Commands, Handle, Local, Plugin, PostUpdate, Res, Startup,
     },
 };
 
@@ -18,10 +17,7 @@ impl Plugin for ModelsPlugin {
         app.init_resource::<GltfScene>()
             .init_resource::<ModelAssets>()
             .add_systems(Startup, load_gltf)
-            .add_systems(
-                PostUpdate,
-                extract_models.run_if(resource_added::<GltfScene>()),
-            );
+            .add_systems(PostUpdate, extract_models);
     }
 }
 
